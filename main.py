@@ -5,13 +5,19 @@ import discord
 from discord import reaction
 from discord.ext import commands
 import asyncio
+import os
+
 
 client = commands.Bot(command_prefix="raz!", help_command=None)
-
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock']
 @client.event
 async def on_ready():
     print("Ready")
     await client.change_presence(activity=discord.Game(name='Starting...'))
+    for cog in cogs: # Looks for the cogs,
+        client.load_extension(cog) # Loads the cogs.
+        print("Loaded cog")
+
     while True:
         print("Changed message")
         print (discord.__version__)
@@ -185,279 +191,11 @@ async def on_message(message):
 @client.command(name="hello")
 async def hello_world(ctx: commands.Context):
     await ctx.send("Hello, world!")
-@client.command(name="help")
-async def command_help(ctx: commands.Context):
-    await ctx.channel.send("This is a bot made by MrRazamataz. For help with the minecraft server look at <#698580298182688809> or do /help on the Minecraft Server.")
-@client.command(name="ping")
-async def command_ping(ctx: commands.Context):
-    await ctx.channel.send("Pong!")
-    await ctx.message.add_reaction("👍")
-    await asyncio.sleep(5)
-    await ctx.message.remove_reaction("👍", ctx.guild.me)
-    print("Message sent in chat.")
-@client.command(name="lucky")
-async def command_lucky(ctx: commands.Context):
-    if ctx.author.guild_permissions.administrator:
-        m = await ctx.channel.send("OO yay a giveaway, my favourite thing to do. It's always fun to give back the epic community. Anyway, just react to the message with my reaction I have added and wait, it's as easy as that!")
-        await m.add_reaction("👍")
-        await asyncio.sleep(86400)
-        await m.remove_reaction("👍", m.guild.me)
-        m = await m.channel.fetch_message(m.id)
-        member = random.choice(await m.reactions[0].users().flatten())
-        await ctx.channel.send("The lucky winner is......")
-        await asyncio.sleep(1)
-        await ctx.channel.send("The")
-        await asyncio.sleep(1)
-        await ctx.channel.send("suspense")
-        await asyncio.sleep(1)
-        await ctx.channel.send("Here we go....")
-        await asyncio.sleep(2)
-        await ctx.channel.send(member.mention)
-        await ctx.channel.send("You have won! How very lucky of you! :). Now wait for <@611976655619227648> to notice and he will give you your prize!")
-        print("Message sent in chat.")
-    else:
-        await ctx.channel.send("It seems you have no perms to run `raz!lucky`!")
-@client.command(name="ver")
-async def command_ver(ctx: commands.Context):
-    async with ctx.channel.typing():
-        await asyncio.sleep(2)
-        await ctx.channel.send("This version of the bot is running version 3.2, with some more moderation command and more things that have been fixed.")
-        await ctx.message.add_reaction("3️⃣")
-        await ctx.message.add_reaction("⚫")
-        await ctx.message.add_reaction("2️⃣")
-        print("Message sent in chat.")
-@client.command(name="countdown")
-async def command_countdown(ctx: commands.Context):
-    await ctx.message.add_reaction("🔟")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("🔟", ctx.guild.me)
-    await ctx.message.add_reaction("9️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("9️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("8️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("8️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("7️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("7️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("6️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("6️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("5️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("5️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("4️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("4️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("3️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("3️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("2️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("2️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("1️⃣")
-    await asyncio.sleep(1)
-    await ctx.message.remove_reaction("1️⃣", ctx.guild.me)
-    await ctx.message.add_reaction("👍")
-    await asyncio.sleep(5)
-    await ctx.message.remove_reaction("👍", ctx.guild.me)
-    print("Countdown run.")
-@client.command(name="tps")
-async def command_tps(ctx: commands.Context):
-    await ctx.channel.send("/tps")
-    print("TPS Done.")
-@client.command(name="spam")
-async def command_spam(ctx: commands.Context):
-    if ctx.author.guild_permissions.administrator:
-        await ctx.channel.send("Spam is bad don't you know! A dm lesson is needed here.")
-        await ctx.author.send("Spamming is very annoying and getting a bot to spam for you is not only scummy, but also against Discord TOS.")
-        print("Message sent in chat.")
-@client.command(name="info")
-async def command_info(ctx: commands.Context):
-    await ctx.channel.send("Hi! I am RazBot, a Discord bot written in python by MrRazamataz! I am meant for helping out around the KC Discord sevrer whilst also having fun with the great community! You can download my source code/view more info at https://mrrazamataz.ga/archive/razbot . You can even add me to your server there!")
-@client.command(name="plugins")
-async def command_info(ctx: commands.Context):
-    async with ctx.channel.typing():
-        await asyncio.sleep(2)
-        await ctx.channel.send("Yoo lemme get that help coming youuuuuur waaayyy!")
-        async with ctx.channel.typing():
-            await asyncio.sleep(2)
-            embed = discord.Embed(title='KC Plugin Help page:',description="This is still a work in progress but here is what is planned to be used to get help with plugin commands on KC instead of just linking to a badly made html site. However, until that day comes here is the page for your plugin help.\n http://kingdomscrusade.net/plugins.html",color=0x00ff00)
-            embed.set_image(url='https://mrrazamataz.ga/archive/RazBot.png')
-            embed.set_footer(text='RazBot', icon_url='https://mrrazamataz.ga/archive/RazBot.png')
-            await ctx.send(embed=embed)
-@client.command(name="5minchannel")
-async def command_tempchannel(ctx: commands.Context):
-    if ctx.author.guild_permissions.administrator:
-        await ctx.guild.create_text_channel('5min')
-        await ctx.channel.send("The channel (#5min) will be deleted in 5 mins.")
-        await asyncio.sleep (5)
-        await ctx.guild.remove_text_channel('5min') #lol this doesnt work yet
-    else:
-        await ctx.channel.send("It seems you have no perms to run `raz!5minchannel`!")
-@client.command(name="slowmode")
-async def setdelay(ctx, seconds: int):
-    if ctx.author.guild_permissions.mute_members:
-        if seconds > 21600:
-            await ctx.channel.send("Sorry, it has to be less than 21600 seconds!")
-        else:
-            await ctx.channel.edit(slowmode_delay=seconds)
-            await ctx.send(f"Set the slowmode delay in this channel to {seconds} seconds!")
-            print ("Slowmode setting changed.")
-    else:
-        await ctx.channel.send("It seems you have no perms to run `raz!slowmode`!")
-@client.command(name="kick")
-@commands.has_permissions(kick_members=True)
-
-async def kick(ctx, member: discord.Member):
-
-    await member.kick()
-    await ctx.message.add_reaction("👍")
-    await ctx.send(f"{member.name} has been kicked by {ctx.author.name}!")
-    await ctx.author.send(f"You kicked {member.display_name}.")
-    await ctx.message.remove_reaction("👍", ctx.guild.me)
-#Ban (perm) command
-@client.command(name="ban")
-@commands.has_permissions(ban_members = True)
-async def ban(ctx, member : discord.Member, *, reason = None):
-    await member.ban(reason = reason)
-    await ctx.send(f"{member.name} has been banned by {ctx.author.name}!")
-    await ctx.message.add_reaction("👍")
-    await asyncio.sleep (5)
-    await ctx.message.remove_reaction("👍", ctx.guild.me)
-#Unban Command
-@client.command(name="unban")
-@commands.has_permissions(ban_members = True)
-async def unban(ctx, *, member):
-    banned_users = await ctx.guild.bans()
-    member_name, member_discriminator = member.split("#")
-
-    for ban_entry in banned_users:
-        user = ban_entry.user
-
-        if (user.name, user.discriminator) == (member_name, member_discriminator):
-            await ctx.guild.unban(user)
-            await ctx.send(f'Unbanned {user.mention}')
-            await ctx.message.add_reaction("👍")
-            await asyncio.sleep(5)
-            await ctx.message.remove_reaction("👍", ctx.guild.me)
-            return
-#TempMute Command
-#@client.command(name="tempmute", aliases=['mute'], pass_context = True)
-@client.command(name="tempmute", pass_context = True)
-@commands.has_permissions(ban_members = True)
-async def tempmute(ctx, member: discord.Member, time: int, d, *, reason=None):
-    guild = ctx.guild
-
-    for role in guild.roles:
-        if role.name == "Muted":
-            await member.add_roles(role)
-
-            embed = discord.Embed(title="RazBot Mute System:", description=f"{member.mention} has been tempmuted ", colour=discord.Colour.dark_purple())
-            embed.add_field(name="Reason:", value=reason, inline=False)
-            embed.add_field(name="Mute duration:", value=f"{time}{d}", inline=False)
-            await ctx.send(embed=embed)
-
-            if d == "s":
-                await asyncio.sleep(time)
-
-            if d == "m":
-                await asyncio.sleep(time*60)
-
-            if d == "h":
-                await asyncio.sleep(time*60*60)
-
-            if d == "d":
-                await asyncio.sleep(time*60*60*24)
-
-            await member.remove_roles(role)
-
-            embed = discord.Embed(title="RazBot Mute System: ", description=f"Unmuted (tempmute expired): -{member.mention} ", colour=discord.Colour.dark_purple())
-            await ctx.send(embed=embed)
-
-            return
-#mute
-@client.command(name="mute")
-@commands.has_permissions(ban_members = True)
-async def mute(ctx, member: discord.Member):
-    guild = ctx.guild
-    for role in guild.roles:
-        if role.name == "Muted":
-            await member.add_roles(role)
-            await ctx.channel.send("User has been muted.")
-
-#Unmute
-@client.command(name="unmute")
-@commands.has_permissions(ban_members = True)
-async def unmute(ctx, member: discord.Member):
-    guild = ctx.guild
-    for role in guild.roles:
-        if role.name == "Muted":
-            await member.remove_roles(role)
-            await ctx.channel.send("User has been unmuted.")
-
-
-@client.command(name="kc.welcome")
-async def command_kcwelcome(ctx: commands.Context):
-    await ctx.message.delete()
-    await ctx.channel.send("Hello there KC Bot! Im sure we can get along even though we understand different languages. Good luck in this community!")
-
-
-@client.command(name="permlist")
-async def command_permlist(ctx: commands.Context):
-    await ctx.author.send("https://www.mrrazamataz.ga/archive/discord%20perms.png")
-    await ctx.author.send("Taken from: https://discordpy.readthedocs.io/en/latest/api.html?highlight=permissions#discord.Permissions")
-    await ctx.channel.send("You got mail!")
-    await ctx.message.add_reaction("👍")
-    await asyncio.sleep(5)
-    await ctx.message.remove_reaction("👍", ctx.guild.me)
-    print("Permlist command ran")
 
 @client.command(name="ping-test")
 async def command_pingtest(ctx: commands.Context):
     async def ping(self, ctx: commands.Context):
         await ctx.send(f"Pong! {round(self.bot.latency * 1000)}ms")
-@client.command(name="tias")
-async def command_tias(ctx: commands.Context):
-    await ctx.channel.send("https://tryitands.ee/")
-@client.command(name="say")
-async def say(ctx, *, text):
-    if ctx.author.guild_permissions.administrator:
-        message = ctx.message
-        await message.delete()
-        await ctx.send(f"{text}")
-    else:
-        message = ctx.message
-        await message.delete()
-        await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
-
-@client.command(name="clear")
-async def clear(ctx, amount: int =None):
-    if ctx.author.guild_permissions.administrator:
-        if amount is None:
-            await ctx.send("Please specify the amount of messages to delete in this command.")
-        else:
-            await ctx.channel.purge(limit=amount+1)
-    else:
-        await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
-@client.command(name="ghostping")
-async def ghostping(ctx, *, text):
-    if ctx.author.guild_permissions.administrator:
-        message = ctx.message
-        await message.delete()
-
-@client.command(name="lockdown")
-@commands.has_permissions(manage_channels = True)
-async def lockdown(ctx):
-    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=False)
-    await ctx.send( ctx.channel.mention + " is now in lockdown.")
-
-@client.command(name="unlock")
-@commands.has_permissions(manage_channels=True)
-async def unlock(ctx):
-    await ctx.channel.set_permissions(ctx.guild.default_role, send_messages=True)
-    await ctx.send(ctx.channel.mention + " has been unlocked.")
-
 
 
 
