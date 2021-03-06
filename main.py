@@ -6,6 +6,7 @@ from discord import reaction
 from discord.ext import commands
 import asyncio
 import os
+import aiofiles
 
 
 client = commands.Bot(command_prefix="raz!", help_command=None)
@@ -21,17 +22,18 @@ async def on_ready():
     while True:
         print("Changed message")
         print (discord.__version__)
-        await asyncio.sleep(5)
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot, thats me!'))
+        await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))
-        await asyncio.sleep(5)
+        await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot > ZacBot'))
-        await asyncio.sleep(5)
+        await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='ReadyPlayerOne'))
-        await asyncio.sleep(5)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='Tears for Fears - Everybody wants to rule the world'))
-        await asyncio.sleep(5)
+        await asyncio.sleep(30)
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my new features getting coded!'))
+        await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name='my creators website where you can download me! razbot.uk.to'))
-
+        await asyncio.sleep(30)
 
 command_pygood = ["Python is good"]
 command_pybad = ["Python is bad"]
