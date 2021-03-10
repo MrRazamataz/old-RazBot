@@ -1,16 +1,19 @@
 #MrRazamataz's RazBot
 
 import random
-import discord
+import discord, datetime, time
 from discord import reaction
 from discord.ext import commands
 import asyncio
 import os
 import aiofiles
 
-
-client = commands.Bot(command_prefix="raz!", help_command=None)
+intents = discord.Intents.default()
+intents.members = True
+client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents)
+client.warnings = {}
 cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock']
+client.reaction_roles = []
 @client.event
 async def on_ready():
     print("Ready")
@@ -18,6 +21,36 @@ async def on_ready():
     for cog in cogs: # Looks for the cogs,
         client.load_extension(cog) # Loads the cogs.
         print("Loaded cog")
+    for guild in client.guilds:
+        client.warnings[guild.id] = {}
+        async with aiofiles.open(f"{guild.id}.txt", mode="a") as temp:
+            pass
+
+    async with aiofiles.open(f"{guild.id}.txt", mode="r") as file:
+        lines = await file.readlines()
+
+        for line in lines:
+            data = line.split(" ")
+            member_id = int(data[0])
+            admin_id = int(data[1])
+            reason = " ".join(data[2:]).strip("\n")
+
+            try:
+                client.warnings[guild.id][member_id][0] += 1
+                client.warnings[guild.id][member_id][1].append((admin_id, reason))
+
+            except KeyError:
+                client.warnings[guild.id][member_id] = [1, [(admin_id, reason)]]
+
+    async with aiofiles.open("reaction_roles.txt", mode="a") as temp:
+        pass
+
+    async with aiofiles.open("reaction_roles.txt", mode="r") as file:
+        lines = await file.readlines()
+        for line in lines:
+            data = line.split(" ")
+            client.reaction_roles.append((int(data[0]), int(data[1]), data[2].strip("\n")))
+    print(f"{client.user.name} is ready.")
 
     while True:
         print("Changed message")
@@ -34,6 +67,39 @@ async def on_ready():
         await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name='my creators website where you can download me! razbot.uk.to'))
         await asyncio.sleep(30)
+# Reaction Role Code
+
+@client.command()
+async def set_reaction(ctx, role: discord.Role = None, msg: discord.Message = None, emoji=None):
+    if role != None and msg != None and emoji != None:
+        await msg.add_reaction(emoji)
+        client.reaction_roles.append((role.id, msg.id, str(emoji.encode("utf-8"))))
+
+        async with aiofiles.open("reaction_roles.txt", mode="a") as file:
+            emoji_utf = emoji.encode("utf-8")
+            await file.write(f"{role.id} {msg.id} {emoji_utf}\n")
+
+        await ctx.channel.send("Reaction has been set.")
+
+    else:
+        await ctx.send("Invalid arguments.")
+
+
+@client.event
+async def on_raw_reaction_add(payload):
+    for role_id, msg_id, emoji in client.reaction_roles:
+        if msg_id == payload.message_id and emoji == str(payload.emoji.name.encode("utf-8")):
+            await payload.member.add_roles(client.get_guild(payload.guild_id).get_role(role_id))
+            return
+
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    for role_id, msg_id, emoji in client.reaction_roles:
+        if msg_id == payload.message_id and emoji == str(payload.emoji.name.encode("utf-8")):
+            guild = client.get_guild(payload.guild_id)
+            await guild.get_member(payload.user_id).remove_roles(guild.get_role(role_id))
+            return
 
 command_pygood = ["Python is good"]
 command_pybad = ["Python is bad"]
@@ -47,8 +113,57 @@ command_dab = ["/dab"]
 command_hate = ["i hate u razbot", "i hate you razbot", "razbot bad", "razbot is bad", "shut up razbot", "SHUTUP RAZBOT"]
 razapinglistener = ["<@611976655619227648>"]
 banned_word_list = ["cunt","Cunt","卐"]
+#warn command
+@client.event
+async def on_guild_join(guild):
+    client.warnings[guild.id] = {}
 
 
+@client.command()
+@commands.has_permissions(ban_members=True)
+async def warn(ctx, member: discord.Member = None, *, reason=None):
+    if member is None:
+        return await ctx.send("The provided member could not be found or you forgot to provide one.")
+
+    if reason is None:
+        return await ctx.send("Please provide a reason for warning this user.")
+
+    try:
+        first_warning = False
+        client.warnings[ctx.guild.id][member.id][0] += 1
+        client.warnings[ctx.guild.id][member.id][1].append((ctx.author.id, reason))
+
+    except KeyError:
+        first_warning = True
+        client.warnings[ctx.guild.id][member.id] = [1, [(ctx.author.id, reason)]]
+
+    count = client.warnings[ctx.guild.id][member.id][0]
+
+    async with aiofiles.open(f"{member.guild.id}.txt", mode="a") as file:
+        await file.write(f"{member.id} {ctx.author.id} {reason}\n")
+
+    await ctx.send(f"{member.mention} has {count} {'warning' if first_warning else 'warnings'}.")
+
+
+@client.command()
+@commands.has_permissions(ban_members=True)
+async def warnings(ctx, member: discord.Member = None):
+    if member is None:
+        return await ctx.send("The provided member could not be found or you forgot to provide one.")
+
+    embed = discord.Embed(title=f"Displaying Warnings for {member.name}", description="", colour=discord.Colour.red())
+    try:
+        i = 1
+        for admin_id, reason in client.warnings[ctx.guild.id][member.id][1]:
+            admin = ctx.guild.get_member(admin_id)
+            embed.description += f"**Warning {i}** given by: {admin.mention} for: *'{reason}'*.\n"
+            i += 1
+
+        await ctx.send(embed=embed)
+
+    except KeyError:  # no warnings
+        await ctx.send("This user has no warnings.")
+#message events
 @client.event
 async def on_message(message):
     if not message.guild:
@@ -106,6 +221,8 @@ async def on_message(message):
                 await message.channel.send("React with <:Downvote:707158001496096808> for no.")
                 await message.channel.send("*React on the message above my messages!*")
                 print("Message sent in chat.")
+            else:
+                print("Perm error in vote command idk!")
     for word in command_suggest:
         if word in message.content:
             await message.add_reaction("<:upvote:707157967471902731>")
