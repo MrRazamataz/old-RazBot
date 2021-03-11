@@ -70,6 +70,7 @@ async def on_ready():
 # Reaction Role Code
 
 @client.command()
+@commands.has_permissions(administrators=True)
 async def set_reaction(ctx, role: discord.Role = None, msg: discord.Message = None, emoji=None):
     if role != None and msg != None and emoji != None:
         await msg.add_reaction(emoji)
