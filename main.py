@@ -12,7 +12,7 @@ intents = discord.Intents.default()
 intents.members = True
 client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents) #intents end 
 client.warnings = {}
-cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock']
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role'] # cogs.join_and_leave
 client.reaction_roles = []
 @client.event
 async def on_ready():
@@ -70,7 +70,7 @@ async def on_ready():
 # Reaction Role Code
 
 @client.command()
-@commands.has_permissions(administrators=True)
+@commands.has_permissions(administrator=True)
 async def set_reaction(ctx, role: discord.Role = None, msg: discord.Message = None, emoji=None):
     if role != None and msg != None and emoji != None:
         await msg.add_reaction(emoji)

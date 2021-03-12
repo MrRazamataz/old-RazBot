@@ -17,10 +17,10 @@ class ver(commands.Cog):
     async def command_ver(self, ctx: commands.Context):
         async with ctx.channel.typing():
             await asyncio.sleep(2)
-            await ctx.channel.send("This version of the bot is running version 3.5, with new warn features!")
+            await ctx.channel.send("This version of the bot is running version 3.6, with new add role command.")
             await ctx.message.add_reaction("3️⃣")
             await ctx.message.add_reaction("⚫")
-            await ctx.message.add_reaction("5️⃣")
+            await ctx.message.add_reaction("6️⃣")
             print("Message sent in chat.")
 
 
