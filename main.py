@@ -7,10 +7,10 @@ from discord.ext import commands
 import asyncio
 import os
 import aiofiles
-
+#This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me. 
 intents = discord.Intents.default()
 intents.members = True
-client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents)
+client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents) #intents end 
 client.warnings = {}
 cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock']
 client.reaction_roles = []
@@ -57,7 +57,7 @@ async def on_ready():
         print (discord.__version__)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot, thats me!'))
         await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))#Intents needed (server member) otherwise will show 1
         await asyncio.sleep(30)
         await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot > ZacBot'))
         await asyncio.sleep(30)
@@ -93,9 +93,9 @@ async def on_raw_reaction_add(payload):
             await payload.member.add_roles(client.get_guild(payload.guild_id).get_role(role_id))
             return
 
-
+#This here needs the server members intent to detect that the user has removed the reaction.  
 @client.event
-async def on_raw_reaction_remove(payload):
+async def on_raw_reaction_remove(payload): 
     for role_id, msg_id, emoji in client.reaction_roles:
         if msg_id == payload.message_id and emoji == str(payload.emoji.name.encode("utf-8")):
             guild = client.get_guild(payload.guild_id)
