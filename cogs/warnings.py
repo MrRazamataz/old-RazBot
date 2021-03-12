@@ -1,5 +1,6 @@
 # MrRazamataz's RazBot
 # Warning command command
+# CURRENTLY THE WARNING SYSTEM ISNT IN THIS COG, ITS IN THE MAIN FILE.
 import random
 import discord
 from discord import reaction
