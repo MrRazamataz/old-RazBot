@@ -32,33 +32,24 @@ body{
 <center>
 <p class="twcenmt" style="font-size:20px"><span style="text-shadow: 2px 2px 0px #383838;">
 <p>Here you can read through the docs for RazBot, both coding and commands.</p>
-<p>How to download:</p>
 <p>Commands:</p>
-<p>Reaction Role command: "raz!set_reaction"</p>
+<p>Reaction Role command: "raz!set_reaction [roleName] [messageID] [Emoji]"</p>
 <p>To set a reaction role message you need 3 things. The role name, the message ID and the emoji you want the reaction role to be. T</p
-<center><p class="twcenmt" style="font-size:16px"><span style="text-shadow: 2px 2px 0px #383838;">Click <a href="RazBot.zip">here</a> to download RazBot.</p>
-<p>Alternativly: you can just use the link below to add RazBot to your server and it will host it off of my hosting!</p>
-<center><p class="twcenmt" style="font-size:16px"><span style="text-shadow: 2px 2px 0px #383838;">Click <a href="https://discord.com/api/oauth2/authorize?client_id=799228628105166848&permissions=8&scope=bot">here</a> to add RazBot to your Discord server.</p>
-<center><b>====Updates:====</b></p><br></center>
-<p>Version 3.5</p>
-<p>This update contains a new warning feature. You can do "raz!warn @usermention [reason]" to add a warn and do "raz!warnings @usermention" to view the warnings of a user.
-<p>Version 3.4</p>
-<p>This update contains reaction roles which can be made with "raz!set_reaction [rolename] [messageid] [emoji]".
-<p>RazBot is now on GitHub!</p>
-<p>This means its easier for you to report bugs and me to keep track of them. Don't worry (if for some reason you like my wesbite), RazBot will continue getting updates on here and now on GitHub at the same time!</p>
-<center><p class="twcenmt" style="font-size:16px"><span style="text-shadow: 2px 2px 0px #383838;">The GitHub link is <a href="https://github.com/MrRazamataz/RazBot">here</a>!</p>
-<p>Version 3.3</p>
-<p>RazBot commands have now been put into "cogs" as a way of getting all the commmands in a different file rather than the main.py file. To run it, its the same, running the main.py file. It will load all the other commands on startup.
-<p>Version 3.1 and 3.2</p>
-<p>Added raz!clear for deleting messages, raz!lockdown to lockdown a channel so people who aren't higerup can't talk in it and then raz!unlock to allow them to talk in the channel again.</p>
-<p>HUGE FEATURE UPDATE 3.0:</p>
-<p>RazBot now supports new moderation commands such as raz!mute,raz!tempmute,raz!unmute,raz!ban and raz!unban. It also has other things such as raz!tias (Try it and see video) and raz!say which says what you said in the command as the bot. Also new DM message handler and more error handlers coming soon!
-<p>Version 2.3</p>
-<p>Loads more commands added and better permisson manager.</p>
-<p>Version 1.2 and 2.0:</p>
-<p>ReWritten the command system so now they are done properly so it doesn't activate if the command word is found, now it needs to be the exact command word in 1 message (apart from raz!vote as I need to do work for being in a message not just a command).</p>
-<p>Added ping reply message if me or zaczer is pinged on discord.
-<p>Added new commands for my server (raz!tps) better "server down" method.</p>
+<b><p>Moderation commands:</p></b>
+	<p>"raz!ban [user-ping] [reason", bans the user with the reason if provided. Requires ban permisson role in Discord.</p>
+	<p>"raz!unban [user-ping], unbans the user. Requieres ban permisson role.</p>
+	<p>"raz!mute [user-ping]", looks for the "Muted" role in the discord server and applies it to the user pinged. Requires the kick members permisson in Discord.</p>
+	<p>"raz!unmute [user-ping]", looks for the "Muted" role in the discord server and removes it from the user pinged. Requires the kick members permisson in Discord.</p>
+	<p>"raz!tempmute [user-ping] [Number] [s/m/h/d]", looks for the "Muted" role in the discord server and applies it to the user pinged for the time specified. Requires the kick members permisson in Discord. Important: The space between [Number] and [s/m/h/d] is needed.</p>
+	<p>"raz!kick [user-ping]", kicks the user specified from the Discord Server. Requires the kick members permisson in Discord.</p>
+	<p>"raz!clear [number]", clears the number of messages specified.</p>
+	<p>"raz!lockdown", puts the channel ran in, in lockdown; meaning people with normal roles (not higher up) cant speak in it. Requires manage_channels permisson.</p>
+	<p>"raz!unlock", undoes the lockdown command. Requires manage_channels permisson.</p>
+	<p>"raz!say [message]", says the message as the bot. Requires admin permisson in discord.
+	<p>"raz!warn [user-ping] [reason]", warns the user specified and saves it to the file for the server. Requires ban_members permisson in discord.</p>
+	<p>"raz!warnings [user-ping]", views the warnings for the user specified from the server file.</p>
+<b><p>Fun/Random Commands:</p></b>
+	<p>raz!lucky</p>
 <br><br>
 <center><p class="twcenmt" style="font-size:20px">
 <span style="text-shadow: 2px 2px 0px #383838;">
