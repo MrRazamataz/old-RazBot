@@ -3,6 +3,13 @@
 ### Languages: Python 3
 ### Packages Used: Random, Discord, datetime, time, asyncio, os, aiofiles, time, discord_slash (for slash commands)
 
+## The Code:
+### How it works:
+![image](https://user-images.githubusercontent.com/56600481/114587865-f8908d00-9c7d-11eb-9db0-17662e2ff8fd.png)
+
+
+
+
 ## Commands:
 ### Moderation commands:
 ### "raz!ban [user-ping] [reason", bans the user with the reason if provided. Requires ban permisson role in Discord.
