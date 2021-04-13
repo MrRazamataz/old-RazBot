@@ -23,6 +23,23 @@
 ### "raz!kick [user-ping]", kicks the user specified from the Discord Server. Requires the kick members permisson in Discord.
 ![image](https://user-images.githubusercontent.com/56600481/114585352-74d5a100-9c7b-11eb-91c2-3a2b19f9ef38.png)
 Also sends a DM to the person that ran the command: ![image](https://user-images.githubusercontent.com/56600481/114585412-83bc5380-9c7b-11eb-90a7-cdea432b9d3f.png)
-
 #
-### 
+### "raz!clear [number]", clears the number of messages specified. 
+No image needed.
+#
+### "raz!lockdown", puts the channel ran in, in lockdown; meaning people with normal roles (not higher up) cant speak in it. Requires manage_channels permisson.
+![image](https://user-images.githubusercontent.com/56600481/114585630-c0884a80-9c7b-11eb-80c1-8c623b0036d0.png)
+#
+### "raz!unlock", undoes the lockdown command. Requires manage_channels permisson.
+![image](https://user-images.githubusercontent.com/56600481/114585661-ca11b280-9c7b-11eb-8dd4-c37f1e1b0a63.png)
+#
+### "raz!say [message]", says the message as the bot. Requires admin permisson in discord. 
+![image](https://user-images.githubusercontent.com/56600481/114586031-24127800-9c7c-11eb-8520-66ad8c2d0e0e.png)
+#
+### raz!warn [user-ping] [reason]", warns the user specified and saves it to the file for the server. Requires ban_members permisson in discord.
+![image](https://user-images.githubusercontent.com/56600481/114586292-6936aa00-9c7c-11eb-9c05-56adef2a0286.png)
+#
+### "raz!warnings [user-ping]", views the warnings for the user specified from the server file.
+![image](https://user-images.githubusercontent.com/56600481/114586364-7b184d00-9c7c-11eb-9047-0895821e9777.png)
+#
+###
