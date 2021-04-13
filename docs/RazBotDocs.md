@@ -7,7 +7,9 @@
 ### How it works: (most important bits only listed here, like starting and defining stuff)
 ![image](https://user-images.githubusercontent.com/56600481/114587909-05ad7c00-9c7e-11eb-8b1e-a8fbcd92d5ec.png)
 ![image](https://user-images.githubusercontent.com/56600481/114589809-efa0bb00-9c7f-11eb-90d4-7b51f1d32c94.png)
-
+#
+At the very bottom of your main py for your bot you need
+`client.run("TOKEN FROM YOUR BOT")` or if you are using bot instead of client its `bot.run`. You need to insert the token from the developer portal.
 
 
 
