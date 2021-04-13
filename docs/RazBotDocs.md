@@ -20,4 +20,9 @@
 ### "raz!tempmute [user-ping] [Number] [s/m/h/d]", looks for the "Muted" role in the discord server and applies it to the user pinged for the time specified. Requires the kick members permisson in Discord. Important: The space between [Number] and [s/m/h/d] is needed.
 ![image](https://user-images.githubusercontent.com/56600481/114585133-3cce5e00-9c7b-11eb-9712-2746abd3d6d0.png)
 #
+### "raz!kick [user-ping]", kicks the user specified from the Discord Server. Requires the kick members permisson in Discord.
+![image](https://user-images.githubusercontent.com/56600481/114585352-74d5a100-9c7b-11eb-91c2-3a2b19f9ef38.png)
+Also sends a DM to the person that ran the command: ![image](https://user-images.githubusercontent.com/56600481/114585412-83bc5380-9c7b-11eb-90a7-cdea432b9d3f.png)
+
+#
 ### 
