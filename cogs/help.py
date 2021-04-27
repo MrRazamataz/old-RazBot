@@ -15,7 +15,7 @@ class help(commands.Cog):
     @commands.command(name="help")
     async def command_help(self, ctx: commands.Context):
         await ctx.channel.send("This is a bot made by MrRazamataz. For help with the minecraft server look at <#698580298182688809> or do /help on the Minecraft Server.")
-
+        await ctx.channel.send("For help with the bot please do raz!cmds or raz!docs.")
 
 def setup(client):
     client.add_cog(help(client))

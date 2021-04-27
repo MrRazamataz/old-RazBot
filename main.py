@@ -7,20 +7,25 @@ from discord.ext import commands
 import asyncio
 import os
 import aiofiles
+import time
+from discord_slash import SlashCommand, SlashContext
 #This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me. 
 intents = discord.Intents.default()
 intents.members = True
-client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents) #intents end 
+quotation_mark = '"'
+client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents, case_insensitive=True) #intents end
+slash = SlashCommand(client, override_type=True, sync_commands=True)
 client.warnings = {}
-cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role'] # cogs.join_and_leave
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest'] # cogs.join_and_leave
 client.reaction_roles = []
+for cog in cogs:  # Looks for the cogs,
+    client.load_extension(cog)  # Loads the cogs.
+    print("Loaded cog")
 @client.event
 async def on_ready():
+    global uptime_start
+    uptime_start = time.time()
     print("Ready")
-    await client.change_presence(activity=discord.Game(name='Starting...'))
-    for cog in cogs: # Looks for the cogs,
-        client.load_extension(cog) # Loads the cogs.
-        print("Loaded cog")
     for guild in client.guilds:
         client.warnings[guild.id] = {}
 
@@ -54,24 +59,62 @@ async def on_ready():
             data = line.split(" ")
             client.reaction_roles.append((int(data[0]), int(data[1]), data[2].strip("\n")))
     print(f"{client.user.name} is ready.")
-
-    while True:
-        print("Changed message")
-        print (discord.__version__)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot, thats me!'))
-        await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))#Intents needed (server member) otherwise will show 1
-        await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot > ZacBot'))
-        await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='ReadyPlayerOne'))
-        await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my new features getting coded!'))
-        await asyncio.sleep(30)
-        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name='my creators website where you can download me! razbot.uk.to'))
-        await asyncio.sleep(30)
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members, razbot.uk.to'))
+    # while True:
+    #     print("Changed message")
+    #     print (discord.__version__)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot, thats me!'))
+    #     await asyncio.sleep(30)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))#Intents needed (server member) otherwise will show 1
+    #     await asyncio.sleep(30)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot > ZacBot'))
+    #     await asyncio.sleep(30)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='ReadyPlayerOne'))
+    #     await asyncio.sleep(30)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my new features getting coded!'))
+    #     await asyncio.sleep(30)
+    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name='my creators website where you can download me! razbot.uk.to'))
+    #     await asyncio.sleep(30)
+@client.command(name="set_status.watch")
+async def set_status_watch(ctx, status_text):
+    if ctx.author.id == 611976655619227648:
+        message = ctx.message
+        status_output = quotation_mark + status_text + quotation_mark
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status_text))
+        await ctx.send(f"Status set to: `{status_output}`")
+        print(f"Status Changed to {status_output}.")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
+@client.command(name="set_status.listen")
+async def set_status_listen(ctx, status_text):
+    if ctx.author.id == 611976655619227648:
+        message = ctx.message
+        status_output = quotation_mark + status_text + quotation_mark
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=status_text))
+        await ctx.send(f"Status set to: `{status_output}`")
+        print(f"Status Changed to {status_output}.")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
+@client.command(name="set_status.play")
+async def set_status_play(ctx, status_text):
+    if ctx.author.id == 611976655619227648:
+        message = ctx.message
+        status_output = quotation_mark + status_text + quotation_mark
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name=status_text))
+        await ctx.send(f"Status set to: `{status_output}`")
+        print(f"Status Changed to {status_output}.")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
+@client.command(name="set_status.reset")
+async def set_status_reset(ctx):
+    if ctx.author.id == 611976655619227648:
+        message = ctx.message
+        await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members, razbot.uk.to'))
+        await ctx.send("Status set to default.")
+        print("Status set to default.")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
 # Reaction Role Code
-
 @client.command()
 @commands.has_permissions(administrator=True)
 async def set_reaction(ctx, role: discord.Role = None, msg: discord.Message = None, emoji=None):
@@ -171,8 +214,11 @@ async def warnings(ctx, member: discord.Member = None):
 @client.event
 async def on_message(message):
     if not message.guild:
-        await message.author.send("Hello there! Commands don't *yet* work in DM's, sorry about that. Please go to the discord server you want to run the commands in and run them there!")
-        return
+        if message.author == client.user:
+            return
+        else:
+            await message.author.send("Hello there! Commands don't *yet* work in DM's, sorry about that. Please go to the discord server you want to run the commands in and run them there!")
+            return
     for word in command_pybad:
         if word in message.content:
             await message.channel.send("You are wrong and you are bad. ")
@@ -213,11 +259,13 @@ async def on_message(message):
     for word in command_hello:
         if word in message.content:
             await message.channel.send("Hello there how are you?")
+            #try:
+                #message = await
             await asyncio.sleep(5)
             await message.channel.send("Thats cool to hear!")
             print("Message sent in chat.")
     for word in command_vote:
-        if message.author.guild_permissions.administrator:
+        if message.guild and message.author.guild_permissions.administrator:
             if word in message.content:
                 await message.add_reaction("<:upvote:707157967471902731>")
                 await message.add_reaction("<:Downvote:707158001496096808>")
@@ -225,8 +273,6 @@ async def on_message(message):
                 await message.channel.send("React with <:Downvote:707158001496096808> for no.")
                 await message.channel.send("*React on the message above my messages!*")
                 print("Message sent in chat.")
-            else:
-                print("Perm error in vote command idk!")
     for word in command_suggest:
         if word in message.content:
             await message.add_reaction("<:upvote:707157967471902731>")
@@ -387,10 +433,17 @@ async def remove(ctx, x):
 
 
 #Error handlers below
-
+#@client.event
+#async def on_command_error(ctx, error):
+    #if isinstance(error, commands.MissingPermissions):
+        #await ctx.send("You don't have permission to run this command, Duh-Doy!")
+    #else:
+        #raise error
 @client.event
 async def on_command_error(ctx, error):
-  if isinstance(error, commands.MissingRequiredArgument):
-      await ctx.send("Please make sure to say all required arguments (ERROR:MissingRequiredArgument). ")
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please make sure to say all required arguments (ERROR:MissingRequiredArgument). ")
+    elif isinstance(error, commands.CommandNotFound):
+        await ctx.send("Unkown command, sorry. Use `raz!cmds` to view a list of commands.")
 
 client.run("TOKEN")
