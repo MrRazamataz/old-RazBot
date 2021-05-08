@@ -16,7 +16,7 @@ quotation_mark = '"'
 client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents, case_insensitive=True) #intents end
 slash = SlashCommand(client, override_type=True, sync_commands=True)
 client.warnings = {}
-cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest'] # cogs.join_and_leave
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest', 'cogs.vote'] # cogs.join_and_leave
 client.reaction_roles = []
 for cog in cogs:  # Looks for the cogs,
     client.load_extension(cog)  # Loads the cogs.
@@ -159,7 +159,7 @@ command_suggest = ["raz!suggest"]
 command_dab = ["/dab"]
 command_hate = ["i hate u razbot", "i hate you razbot", "razbot bad", "razbot is bad", "shut up razbot", "SHUTUP RAZBOT"]
 razapinglistener = ["<@611976655619227648>"]
-banned_word_list = ["cunt","Cunt","卐"]
+banned_word_list = ["卐"]
 #warn command
 @client.event
 async def on_guild_join(guild):
@@ -300,9 +300,9 @@ async def on_message(message):
                 print ("Deleted")
                 await message.author.send("You just sent a banned word, please refrain from doing that again.")
                 await message.author.send("https://mrrazamataz.ga/archive/mcserver/Code%20of%20conduct.png")
-    for word in razapinglistener:
-        if word in message.content:
-            await message.channel.send("You have pinged MrRazamataz, he will respond when he gets the chance. Please bear in mind that his timezone is GMT. He reads all ping messages so there is no need to spam ping.", delete_after=5)
+    #for word in razapinglistener:
+        #if word in message.content:
+            #await message.channel.send("You have pinged MrRazamataz, he will respond when he gets the chance. Please bear in mind that his timezone is GMT. He reads all ping messages so there is no need to spam ping.", delete_after=5)
     if 611976655619227648 in [mention.id for mention in message.mentions]: #the numbers are my id (replace with someone else if you want)
         if not message.author.bot:
             await message.add_reaction("🇵")
@@ -445,5 +445,6 @@ async def on_command_error(ctx, error):
         await ctx.send("Please make sure to say all required arguments (ERROR:MissingRequiredArgument). ")
     elif isinstance(error, commands.CommandNotFound):
         await ctx.send("Unkown command, sorry. Use `raz!cmds` to view a list of commands.")
-
+    elif isinstance(error, commands.MissingPermissions):
+        await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
 client.run("TOKEN")

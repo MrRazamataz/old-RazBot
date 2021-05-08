@@ -22,6 +22,5 @@ class mute(commands.Cog):
                 await member.add_roles(role)
                 await ctx.channel.send("User has been muted.")
 
-
 def setup(client):
     client.add_cog(mute(client))

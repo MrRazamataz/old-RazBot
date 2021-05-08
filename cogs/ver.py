@@ -17,10 +17,13 @@ class ver(commands.Cog):
     async def command_ver(self, ctx: commands.Context):
         async with ctx.channel.typing():
             await asyncio.sleep(2)
-            await ctx.channel.send("This version of the bot is running version 3.8, with new status commands and working on `raz!cmds`.")
+            await ctx.channel.send("This version of the bot is running version 3.9.5, with working `raz!help` and bug fixes.")
             await ctx.message.add_reaction("3️⃣")
             await ctx.message.add_reaction("⚫")
-            await ctx.message.add_reaction("8️⃣")
+            await ctx.message.add_reaction("9️⃣")
+            await ctx.message.add_reaction("🟢")
+            await ctx.message.add_reaction("5️⃣")
+
             print("Message sent in chat.")
 
 
