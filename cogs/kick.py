@@ -15,12 +15,13 @@ class kick(commands.Cog):
 
     @commands.command(name="kick")
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member):
-        await member.kick()
+    async def kick(self, ctx, member: discord.Member, *, arg1):
+        await member.send(f"You have been kicked from `{member.guild.name}`. Kick reason: `{arg1}`")
+        await member.kick(reason=arg1)
         await ctx.message.add_reaction("👍")
         await ctx.send(f"{member.name} has been kicked by {ctx.author.name}!")
-        await ctx.author.send(f"You kicked {member.display_name}.")
         await ctx.message.remove_reaction("👍", ctx.guild.me)
 
 def setup(client):
     client.add_cog(kick(client))
+

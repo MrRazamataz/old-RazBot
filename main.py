@@ -9,6 +9,8 @@ import os
 import aiofiles
 import time
 from discord_slash import SlashCommand, SlashContext
+import aiosqlite
+from datetime import datetime
 #This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me. 
 intents = discord.Intents.default()
 intents.members = True
@@ -16,16 +18,24 @@ quotation_mark = '"'
 client = commands.Bot(command_prefix="raz!", help_command=None, intents=intents, case_insensitive=True) #intents end
 slash = SlashCommand(client, override_type=True, sync_commands=True)
 client.warnings = {}
-cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest', 'cogs.vote'] # cogs.join_and_leave
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.kcwelcome', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest', 'cogs.vote', 'cogs.user', 'cogs.meme', 'cogs.british', 'cogs.wiki', 'cogs.music'] # cogs.join_and_leave
 client.reaction_roles = []
+dm_list = []
 for cog in cogs:  # Looks for the cogs,
     client.load_extension(cog)  # Loads the cogs.
-    print("Loaded cog")
+    print("[RazBot] Loaded cog")
+#for file in os.listdir('cogs'):
+       # if file.endswith('.py'):
+            #try:
+                #client.load_extension("cogs." + os.path.splitext(file)[0])
+                #print(f'Extension {file} loaded.')
+            #except Exception as e:
+                #print(f'Failed to load cog{file}: {e}')
 @client.event
 async def on_ready():
     global uptime_start
     uptime_start = time.time()
-    print("Ready")
+    print("[RazBot] Loading...")
     for guild in client.guilds:
         client.warnings[guild.id] = {}
 
@@ -49,6 +59,13 @@ async def on_ready():
                     client.warnings[guild.id][member_id] = [1, [(admin_id, reason)]]
 
     print(client.user.name + " is ready.")
+    async with aiofiles.open("dm.txt", mode="a") as temp:
+        pass
+
+    #async with aiofiles.open("dm.txt", mode="r") as file:
+        #lines = await file.readlines()
+        #for line in lines:
+            #dm_list.append((int(data[0])))
 
     async with aiofiles.open("reaction_roles.txt", mode="a") as temp:
         pass
@@ -60,21 +77,35 @@ async def on_ready():
             client.reaction_roles.append((int(data[0]), int(data[1]), data[2].strip("\n")))
     print(f"{client.user.name} is ready.")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members, razbot.uk.to'))
-    # while True:
-    #     print("Changed message")
-    #     print (discord.__version__)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot, thats me!'))
-    #     await asyncio.sleep(30)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members'))#Intents needed (server member) otherwise will show 1
-    #     await asyncio.sleep(30)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='RazBot > ZacBot'))
-    #     await asyncio.sleep(30)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='ReadyPlayerOne'))
-    #     await asyncio.sleep(30)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name='my new features getting coded!'))
-    #     await asyncio.sleep(30)
-    #     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening,name='my creators website where you can download me! razbot.uk.to'))
-    #     await asyncio.sleep(30)
+def check_if_string_in_file(file_name, string_to_search): #string checker
+    """ Check if any line in the file contains given string """
+    # Open the file in read only mode
+    with open(file_name, 'r') as read_obj:
+        # Read all lines in the file one by one
+        for line in read_obj:
+            # For each line, check if line contains the string
+            if string_to_search in line:
+                return True
+    return False
+@client.command(name="bugreport")
+async def command_cog(ctx, *, message):
+    async with aiofiles.open("bug_data.txt", mode="a") as file:
+        await file.write(f"`{message}`, reported by `{ctx.author}`." + "\n")
+        await file.close()
+        await ctx.send("Bug report has been saved.")
+
+
+@client.command(name="bugreport.list")
+async def dm_all(ctx):
+    await ctx.send("Reading bug reports from file:")
+    bugreportlist = "Empty!"
+    async with aiofiles.open("bug_data.txt", mode="r") as bugreportlist:
+        count = 0
+        async for line in bugreportlist:
+            count += 1
+            #print("Line{}: {}".format(count, line.strip()))
+            await ctx.send(f"Line {count}: {line}")
+
 @client.command(name="set_status.watch")
 async def set_status_watch(ctx, status_text):
     if ctx.author.id == 611976655619227648:
@@ -147,7 +178,33 @@ async def on_raw_reaction_remove(payload):
             guild = client.get_guild(payload.guild_id)
             await guild.get_member(payload.user_id).remove_roles(guild.get_role(role_id))
             return
+@client.command(name="dm_in")
+async def dm_in(ctx):
+    if check_if_string_in_file('dm.txt', f"{ctx.message.author.id}\n"):
+        await ctx.channel.send("You are already in DM notifications, thanks!")
+    else:
+        async with aiofiles.open("dm.txt", mode="a") as file:
+            await file.write(f"{ctx.message.author.id}\n")
+            await file.close()
+        await ctx.channel.send("Added to DM notifications, thank you!")
+@client.command(name="dm_all.in")
+async def dm_all(ctx, *, text):
+    if ctx.author.id == 611976655619227648:
+        await ctx.send("DM messaging started, this may take a while depending on the amount of users to respect the discord API.")
+        dm_list = []
+        with open('dm.txt') as dm_file:
+            for line in dm_file:
+                try:
+                    user = client.get_user(int(line))
+                    await user.send(text)
+                    await asyncio.sleep(5)
+                except discord.Forbidden:
+                    pass
 
+
+        await ctx.send("DM message sent to everyone!")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
 command_pygood = ["Python is good"]
 command_pybad = ["Python is bad"]
 command_razaiscool = ["raza is cool"]
@@ -164,6 +221,7 @@ banned_word_list = ["卐"]
 @client.event
 async def on_guild_join(guild):
     client.warnings[guild.id] = {}
+
 
 
 @client.command()
@@ -190,8 +248,10 @@ async def warn(ctx, member: discord.Member = None, *, reason=None):
         await file.write(f"{member.id} {ctx.author.id} {reason}\n")
 
     await ctx.send(f"{member.mention} has {count} {'warning' if first_warning else 'warnings'}.")
-
-
+    #await member.send(f"You have been warned in `{member.guild.name}`. Warn reason: `{reason}`. **Please make sure to follow the rules, otherwise you risk futher punishment!**")
+    embed = discord.Embed(title=f"You have been warned in `{member.guild.name}`", description="", colour=discord.Colour.red())
+    embed.description += f"You currently have **{count}** warnings in `{member.guild.name}`.\n Your latest warning had the reason: `{reason}`.\n Please make sure to follow the rules, otherwise you may risk further punishment!"
+    await member.send(embed=embed)
 @client.command()
 @commands.has_permissions(ban_members=True)
 async def warnings(ctx, member: discord.Member = None):
@@ -213,6 +273,8 @@ async def warnings(ctx, member: discord.Member = None):
 #message events
 @client.event
 async def on_message(message):
+    if message.author.bot:
+        return
     if not message.guild:
         if message.author == client.user:
             return
@@ -265,7 +327,7 @@ async def on_message(message):
             await message.channel.send("Thats cool to hear!")
             print("Message sent in chat.")
     for word in command_vote:
-        if message.guild and message.author.guild_permissions.administrator:
+        if message.author.guild_permissions.administrator:
             if word in message.content:
                 await message.add_reaction("<:upvote:707157967471902731>")
                 await message.add_reaction("<:Downvote:707158001496096808>")
@@ -303,59 +365,71 @@ async def on_message(message):
     #for word in razapinglistener:
         #if word in message.content:
             #await message.channel.send("You have pinged MrRazamataz, he will respond when he gets the chance. Please bear in mind that his timezone is GMT. He reads all ping messages so there is no need to spam ping.", delete_after=5)
-    if 611976655619227648 in [mention.id for mention in message.mentions]: #the numbers are my id (replace with someone else if you want)
-        if not message.author.bot:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (raza).")
-    if 442243565494599701 in [mention.id for mention in message.mentions]: #here the number is zac
-        if not message.author.bot:  #if message.author != client.user:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (zac).")
-    if 675643162374701056 in [mention.id for mention in message.mentions]: #here the number is lil
-        if not message.author.bot:  #if message.author != client.user:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (lil).")
-    if 730474271352291438 in [mention.id for mention in message.mentions]: #here the number is tiger
-        if not message.author.bot:  #if message.author != client.user:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (Tiger).")
-    if 807587465720102962 in [mention.id for mention in message.mentions]: #here the number is chewie
-        if not message.author.bot:  #if message.author != client.user:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (chewie).")
-    if 649681762598912010 in [mention.id for mention in message.mentions]: #here the number is phaontom
-        if not message.author.bot:  #if message.author != client.user:
-            await message.add_reaction("🇵")
-            await message.add_reaction("🇮")
-            await message.add_reaction("🇳")
-            await message.add_reaction("🇬")
-            await message.clear_reactions()
-            print ("Ping warn sent (phantom).")
-
+    '''
+    guild = message.guild
+    log_channel = discord.utils.get(guild.channels, name="razbot-logs")
+    if log_channel is None:
+        await client.process_commands(message)
+        return
+    if not message.author.bot:
+        embed = discord.Embed(
+            color=0xffd700,
+            timestamp=datetime.utcnow(),
+            description="in {}:\n{}".format(message.channel.mention, message.content)
+        )
+        embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+        embed.set_footer(text=message.author.id)
+        if len(message.attachments) > 0:
+            embed.set_image(url=message.attachments[0].url)
+        await log_channel.send(embed=embed)
+    '''
 
     await client.process_commands(message)
+@client.event
+async def on_message_delete(message):
+    guild = message.guild
+    log_channel = discord.utils.get(guild.channels, name="razbot-logs")
+    if log_channel is None:
+        await client.process_commands(message)
+        return
+    if not message.author.bot:
+        if check_if_string_in_file('logsettings.txt', f"{message.channel.id}\n"):
+            return
+        else:
+            embed = discord.Embed(title="{} deleted a message.".format(message.author.name),
+                                  description="in {}:\n{}".format(message.channel.mention, message.content), color=0xFF0000, timestamp=datetime.utcnow(),)
+            embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+            embed.set_footer(text=message.author.id)
 
-
+            embed.add_field(name="Action:", value="Message has been deleted by user.",
+                            inline=True)
+            await log_channel.send(embed=embed)
+    await client.process_commands(message)
+@client.event
+async def on_message_edit(message_before, message_after):
+    if check_if_string_in_file('logsettings.txt', f"{message_after.channel.id}\n"):
+        return
+    else:
+        editEm=discord.Embed(title="Message edited".format(str(message_before.author)),
+        description="", color=discord.Color.purple())
+        editEm.add_field(name= "**Before:**" ,value=message_before.content, inline=False)
+        editEm.add_field(name= "**After:**" ,value=message_after.content, inline=False)
+        editEm.set_author(name=message_before.author, icon_url=message_before.author.avatar_url)
+        editEm.timestamp = datetime.utcnow()
+        log_channel = discord.utils.get(message_after.guild.channels, name="razbot-logs")
+        if log_channel is None:
+            return
+        else:
+            await log_channel.send(embed=editEm)
+@client.command(name="log.off")
+async def logoff(ctx, channel: discord.TextChannel):
+    if check_if_string_in_file('logsettings.txt', f"{channel.id}\n"):
+        await ctx.channel.send("This channel already has logs disabled!")
+    else:
+        async with aiofiles.open("logsettings.txt", mode="a") as file:
+            await file.write(f"{channel.id}"+ "\n")
+            await file.close()
+            await ctx.channel.send(f"{channel.mention} will no longer show in RazBot Logs.")
 #Proper commands here
 @client.command(name="hello")
 async def hello_world(ctx: commands.Context):
@@ -368,69 +442,6 @@ async def command_pingtest(ctx: commands.Context):
 
 
 
-#Testing below, not to be used.
-
-@client.command(name="bug.report")
-async def command_bugreport(ctx: commands.Context):
-    await ctx.send("BugReport sequence starting!")
-    await ctx.send("What software are you playing on (bedrock or java)? Please say your answer in lowercase.")
-    device = await client.wait_for('message')
-    if device.content == "bedrock":
-        await ctx.send("You selected bedrock!")
-        await ctx.send("Whats the bug you are reporting?")
-        bedrock_bug = await client.wait_for('message')
-        await ctx.send ("Listening...")
-        if bedrock_bug.content == on_message:
-             await ctx.send(bedrock_bug)
-
-
-    elif device.content == "java":
-        await ctx.send("You selected java!")
-        await ctx.send("What software are you playing on (bedrock or java)? Please say your answer in lowercase.")
-
-xbox = "⊠ "
-box = "▢ "
-to_do = []
-check_list = [box, box, box, box]
-# check_list = ["▢ ", "▢ ", "▢ ", "▢ "]
-
-@client.command(name="bug.check")
-async def check(ctx, x):
-
-    if check_list[int(x)-1] == box:
-        check_list[int(x)-1] = xbox
-    else:
-        check_list[int(x)-1] = box
-    await list(ctx)
-@client.command(name="bug.list")
-async def list(ctx):
-    for i in range (len(to_do)):
-        bugdata = (check_list[i], to_do[i])
-        f = open("bug_data.txt", "r")
-        await ctx.send(f.read())
-@client.command(name="bug.listnum")
-async def list_number(ctx):
-    for i in range (len(to_do)):
-        ligne = i+1
-        bugdata = (ligne, check_list[i], to_do[i])
-        await ctx.send(bugdata)
-@client.command(name="bug.create")
-async def create(ctx, x):
-    to_do.append(x)
-    check_list.append("▢ ")
-    await list(ctx)
-    f = open("bug_data.txt.txt", "a")
-    f.write(list)
-    f.write("\n")
-@client.command(name="bug.remove")
-async def remove(ctx, x):
-    to_do.pop(int(x)-1)
-    check_list.pop(int(x)-1)
-    await list(ctx)
-
-
-
-
 
 #Error handlers below
 #@client.event
@@ -439,12 +450,14 @@ async def remove(ctx, x):
         #await ctx.send("You don't have permission to run this command, Duh-Doy!")
     #else:
         #raise error
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("Please make sure to say all required arguments (ERROR:MissingRequiredArgument). ")
     elif isinstance(error, commands.CommandNotFound):
-        await ctx.send("Unkown command, sorry. Use `raz!cmds` to view a list of commands.")
+        await ctx.send("Unkown command, sorry. Use `raz!help` to view a list of commands.")
     elif isinstance(error, commands.MissingPermissions):
         await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
+
 client.run("TOKEN")
