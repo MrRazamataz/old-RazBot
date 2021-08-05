@@ -11,6 +11,7 @@ import time
 from discord_slash import SlashCommand, SlashContext
 import aiosqlite
 from datetime import datetime
+from discord.utils import get
 #This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me. 
 intents = discord.Intents.default()
 intents.members = True
@@ -77,6 +78,14 @@ async def on_ready():
             client.reaction_roles.append((int(data[0]), int(data[1]), data[2].strip("\n")))
     print(f"{client.user.name} is ready.")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members, razbot.uk.to'))
+    while True:
+        await asyncio.sleep(10)
+        if os.path.getsize("spam_detect.txt") > 0:
+            with open("spam_detect.txt", "r+") as file:
+                file.truncate(0)
+            print("Cleared spam detect text file.")
+        else:
+            print("Spam file was empty, so not clearing.")
 def check_if_string_in_file(file_name, string_to_search): #string checker
     """ Check if any line in the file contains given string """
     # Open the file in read only mode
@@ -87,6 +96,11 @@ def check_if_string_in_file(file_name, string_to_search): #string checker
             if string_to_search in line:
                 return True
     return False
+@client.event
+async def on_member_join(member):
+    print("Status updated, user joined.")
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                           name=f'{len(client.users)} Members, razbot.uk.to. Newest member is `{member.name}`!'))
 @client.command(name="bugreport")
 async def command_cog(ctx, *, message):
     async with aiofiles.open("bug_data.txt", mode="a") as file:
@@ -145,6 +159,20 @@ async def set_status_reset(ctx):
         print("Status set to default.")
     else:
         await ctx.send("This command can only be ran by MrRazamataz!")
+@client.command(name="leaveserver")
+async def leaveserver(ctx, guild_id):
+    if ctx.author.id == 611976655619227648:
+        await client.get_guild(int(guild_id)).leave()
+        await ctx.send(f"I left: {guild_id}")
+    else:
+        await ctx.send("This command can only be ran by MrRazamataz!")
+@client.command(name="vcamount")
+async def vcamount(ctx):
+    count_list = []
+    for vc in client.voice_clients:
+        for member in vc.members:
+            count_list.append(member)
+    await ctx.send(f"There are {count_list} connected voice channels!")
 # Reaction Role Code
 @client.command()
 @commands.has_permissions(administrator=True)
@@ -228,10 +256,10 @@ async def on_guild_join(guild):
 @commands.has_permissions(ban_members=True)
 async def warn(ctx, member: discord.Member = None, *, reason=None):
     if member is None:
-        return await ctx.send("The member you provided (or didnt) could not be found, please make sure to @ mention them.")
+        return await ctx.send("Yo hold up there! You need to @ mention a user to warn them! \n `raz!warn <@member> [reason]` <--- format to follow.")
 
     if reason is None:
-        return await ctx.send("Please provide a reason for warning this user.")
+        return await ctx.send("Warning a user with no reason is kinda pointless, I think you should proivde a reason! \m `raz!warn <@member> [reason]` <--- format to follow (you got there mostly)!")
 
     try:
         first_warning = False
@@ -256,7 +284,7 @@ async def warn(ctx, member: discord.Member = None, *, reason=None):
 @commands.has_permissions(ban_members=True)
 async def warnings(ctx, member: discord.Member = None):
     if member is None:
-        return await ctx.send("The member you provided (or didnt) could not be found, please make sure to @ mention them.")
+        return await ctx.send("You didnt @ mention a user, so I don't know who to search for in my database! Duh-Doy! \n `raz!warnings <@member>`")
 
     embed = discord.Embed(title=f"Displaying Warnings for {member.name}", description="", colour=discord.Colour.red())
     try:
@@ -355,6 +383,40 @@ async def on_message(message):
             await message.author.send("If you are ever sad, please contact someone (MrRazamataz has his dms open).")
             await message.author.send("Have a nice day! Do you still hate me?")
             print("Hate dealt with.")
+    if get(message.guild.roles, name="RazBot-Spam-Mute"):
+        role = get(message.guild.roles, name="RazBot-Spam-Mute")
+        counter = 0
+        with open("spam_detect.txt", "r+") as file:
+            for lines in file:
+                if lines.strip("\n") == str(message.author.id):
+                    counter+=1
+            file.writelines(f"{str(message.author.id)}\n")
+            if counter > 5:
+                await message.author.add_roles(role)
+                embed = discord.Embed(title=f"You have been automatically temp-muted in `{message.guild.name}`", description="",
+                                      colour=discord.Colour.red())
+                embed.description += f"This was for spamming, and I, RazBot, picked up on it and muted you (the server owner has my spam mute turned on), sorry about that, but don't spam! \n This has been recorded in the RazBot logs."
+                await message.author.send(embed=embed)
+                guild = message.guild
+                log_channel = discord.utils.get(guild.channels, name="razbot-logs")
+                if log_channel is None:
+                    await client.process_commands(message)
+                    return
+                else:
+                    embed = discord.Embed(title="{} was auto temp-muted for spamming.".format(message.author.name),
+                                          description="in {}:\n{}".format(message.channel.mention, message.content),
+                                          color=0xff7700, timestamp=datetime.utcnow(), )
+                    embed.set_author(name=message.author, icon_url=message.author.avatar_url)
+                    embed.set_footer(text=message.author.id)
+
+                    embed.add_field(name="Action:", value="User has been temp-muted for 10 seconds.",
+                                    inline=True)
+                    await log_channel.send(embed=embed)
+                await asyncio.sleep(10)
+                await message.author.remove_roles(role)
+    else:
+        return
+
     for word in banned_word_list:
         if not message.author.bot:
             if word in message.content:
@@ -422,6 +484,7 @@ async def on_message_edit(message_before, message_after):
         else:
             await log_channel.send(embed=editEm)
 @client.command(name="log.off")
+@commands.has_permissions(administrator=True)
 async def logoff(ctx, channel: discord.TextChannel):
     if check_if_string_in_file('logsettings.txt', f"{channel.id}\n"):
         await ctx.channel.send("This channel already has logs disabled!")
@@ -438,7 +501,7 @@ async def hello_world(ctx: commands.Context):
 @client.command(name="ping-test")
 async def command_pingtest(ctx: commands.Context):
     async def ping(self, ctx: commands.Context):
-        await ctx.send(f"Pong! {round(self.bot.latency * 1000)}ms")
+        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
 
 
 
