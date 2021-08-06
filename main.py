@@ -12,7 +12,7 @@ from discord_slash import SlashCommand, SlashContext
 import aiosqlite
 from datetime import datetime
 from discord.utils import get
-#This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me. 
+#This is where server intents is needed in the discord deveoper portal, this will be noted later on using the #Intents <desc> comment that is added by me.
 intents = discord.Intents.default()
 intents.members = True
 quotation_mark = '"'
@@ -198,9 +198,9 @@ async def on_raw_reaction_add(payload):
             await payload.member.add_roles(client.get_guild(payload.guild_id).get_role(role_id))
             return
 
-#This here needs the server members intent to detect that the user has removed the reaction.  
+#This here needs the server members intent to detect that the user has removed the reaction.
 @client.event
-async def on_raw_reaction_remove(payload): 
+async def on_raw_reaction_remove(payload):
     for role_id, msg_id, emoji in client.reaction_roles:
         if msg_id == payload.message_id and emoji == str(payload.emoji.name.encode("utf-8")):
             guild = client.get_guild(payload.guild_id)
@@ -383,6 +383,13 @@ async def on_message(message):
             await message.author.send("If you are ever sad, please contact someone (MrRazamataz has his dms open).")
             await message.author.send("Have a nice day! Do you still hate me?")
             print("Hate dealt with.")
+    for word in banned_word_list:
+        if not message.author.bot:
+            if word in message.content:
+                await message.delete()
+                print ("Deleted")
+                await message.author.send("You just sent a banned word, please refrain from doing that again.")
+                await message.author.send("https://mrrazamataz.ga/archive/mcserver/Code%20of%20conduct.png")
     if get(message.guild.roles, name="RazBot-Spam-Mute"):
         role = get(message.guild.roles, name="RazBot-Spam-Mute")
         counter = 0
@@ -414,39 +421,17 @@ async def on_message(message):
                     await log_channel.send(embed=embed)
                 await asyncio.sleep(10)
                 await message.author.remove_roles(role)
+        await client.process_commands(message)         #await client.process_commands(message)
     else:
+        await client.process_commands(message)
         return
 
-    for word in banned_word_list:
-        if not message.author.bot:
-            if word in message.content:
-                await message.delete()
-                print ("Deleted")
-                await message.author.send("You just sent a banned word, please refrain from doing that again.")
-                await message.author.send("https://mrrazamataz.ga/archive/mcserver/Code%20of%20conduct.png")
     #for word in razapinglistener:
         #if word in message.content:
             #await message.channel.send("You have pinged MrRazamataz, he will respond when he gets the chance. Please bear in mind that his timezone is GMT. He reads all ping messages so there is no need to spam ping.", delete_after=5)
-    '''
-    guild = message.guild
-    log_channel = discord.utils.get(guild.channels, name="razbot-logs")
-    if log_channel is None:
-        await client.process_commands(message)
-        return
-    if not message.author.bot:
-        embed = discord.Embed(
-            color=0xffd700,
-            timestamp=datetime.utcnow(),
-            description="in {}:\n{}".format(message.channel.mention, message.content)
-        )
-        embed.set_author(name=message.author, icon_url=message.author.avatar_url)
-        embed.set_footer(text=message.author.id)
-        if len(message.attachments) > 0:
-            embed.set_image(url=message.attachments[0].url)
-        await log_channel.send(embed=embed)
-    '''
 
-    await client.process_commands(message)
+
+    #await client.process_commands(message)
 @client.event
 async def on_message_delete(message):
     guild = message.guild
