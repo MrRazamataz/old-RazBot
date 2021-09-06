@@ -21,6 +21,8 @@ class unmute(commands.Cog):
             if role.name == "Muted":
                 await member.remove_roles(role)
                 await ctx.channel.send("User has been unmuted.")
-
+    @unmute.error
+    async def unmute_error(self, ctx, error):
+        await ctx.send("Sheeeeesh! \nThe correct formatting for this command is: \n`raz!unmute [user-ping]`")
 def setup(client):
     client.add_cog(unmute(client))

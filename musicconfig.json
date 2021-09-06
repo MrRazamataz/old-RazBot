@@ -1,0 +1,13 @@
+{
+    "spotify":
+    {
+        "client_id": "",
+        "client_secret": ""
+    },
+    "youtube":
+    {
+        "api_key": "",
+        "client_id": "",
+        "client_secret": ""
+    }
+}

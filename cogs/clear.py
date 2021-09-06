@@ -23,6 +23,8 @@ class clear(commands.Cog):
         else:
             await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
 
-
+    @clear.error
+    async def clear_error(self, ctx, error):
+        await ctx.send("Man this one simple... \nThe correct formatting for this command is: \n`raz!clear [number]`")
 def setup(client):
     client.add_cog(clear(client))

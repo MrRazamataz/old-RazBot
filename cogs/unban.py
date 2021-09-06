@@ -29,6 +29,8 @@ class mod(commands.Cog):
                 await asyncio.sleep(5)
                 await ctx.message.remove_reaction("👍", ctx.guild.me)
                 return
-
+    @unban.error
+    async def unban_error(self, ctx, error):
+        await ctx.send("Yeet! \nThe correct formatting for this command is: \n`raz!unban [user]`")
 def setup(client):
     client.add_cog(mod(client))

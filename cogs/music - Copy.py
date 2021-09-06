@@ -302,9 +302,9 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
         nodes = {
             "MAIN": {
-                "host": "65.21.143.114",
+                "host": "localhost",
                 "port": 2333,
-                "rest_uri": "http://65.21.143.114:2333",
+                "rest_uri": "http://localhost:2333",
                 "password": "youshallnotpass",
                 "identifier": "MAIN",
                 "region": "europe",
@@ -358,7 +358,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             if not re.match(URL_REGEX, query):
                 query = f"ytsearch:{query}"
             if "open.spotify.com" in query:
-                await ctx.send("This system is in **beta**, which means it will be buggy and slow.\n Issues are things such as getting rate limited by google, \nand the spammy text upon adding to a queue. \nSome of these issues have fixes in the works. \nPlease report issues to `MrRazamataz#6614`! ")
+                await ctx.send("Reading your spotify playlist, may take a few moments...")
                 playlist_id = f"{query[-10:]}.txt"
                 directory = 'playlists'
                 filenames = os.listdir(directory)
@@ -366,21 +366,18 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 #only_files = [f for f in full_filepaths if os.path.isfile(f)]
                 print(filenames)
                 print(playlist_id)
-                await ctx.send("----------\n**THERE IS CURRENTLY A ANTI-RATE LIMIT IN PLACE, SO YOUR SPOTIFY PLAYLISTS WILL ADD SONGS ONE AT A TIME!**\nThis is being worked on, but its to prevent being blocked by YouTube.\n----------")
                 if playlist_id in filenames:
                     await ctx.send("Found playlist in cache!")
-                    file = open(f"playlists/{playlist_id}")
+                    file = open(f"playlists\{playlist_id}")
                     content = file.read()
                     content_list = content.splitlines()
                     file.close()
                     for line in content_list:
                         print(line)
                         await player.add_tracks(ctx, await self.wavelink.get_tracks(line))
-                        await asyncio.sleep(60)
                     return
                 else:
                     await ctx.send("Not found playlist in cache, contacting API...")
-                    await ctx.send("Reading your spotify playlist, may take a few moments...")
                     try:
                         # asyncio.run(spotyplaylist(message))
                         query = (spotyplaylist(query))
@@ -389,7 +386,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                         save = []
                         for i in query:
                             print(i)
-                            f = open(f"playlists/{playlist_id}", "a")
+                            f = open(f"playlists\{playlist_id}", "a")
                             f.write(f"{i}\n")
                             f.close()
                             '''
@@ -401,14 +398,12 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                                 await file.write(f"test")
                             '''
                             await player.add_tracks(ctx, await self.wavelink.get_tracks(i))
-                            await asyncio.sleep(60)
                         return
                     except Exception as e:
                         print(e)
                         user = ctx.get_user(611976655619227648)
                         await user.send(f"Error in spotify music command: \n`{e}`")
                         await ctx.send(f"Failed :(, error has been DMed to MrRazamataz.")
-                        await ctx.send("Try sending the URL without the stuff after `&`.")
             await player.add_tracks(ctx, await self.wavelink.get_tracks(query))
 
     @play_command.error
