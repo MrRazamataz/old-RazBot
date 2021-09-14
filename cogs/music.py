@@ -303,11 +303,11 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         nodes = {
             "MAIN": {
                 "host": "",
-                "port": ,
+                "port": 2333,
                 "rest_uri": "",
                 "password": "",
-                "identifier": "",
-                "region": "",
+                "identifier": "MAIN",
+                "region": "europe",
             }
         }
 
@@ -358,7 +358,23 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
             if not re.match(URL_REGEX, query):
                 query = f"ytsearch:{query}"
             if "open.spotify.com" in query:
-                await ctx.send("This system is in **beta**, which means it will be buggy and slow.\n Issues are things such as getting rate limited by google, \nand the spammy text upon adding to a queue. \nSome of these issues have fixes in the works. \nPlease report issues to `MrRazamataz#6614`! ")
+                try:
+                    embed = discord.Embed(title="__Importent Infomation:__ ", color=0xff0808)
+                    embed.set_author(name="RazBot", url="https://razbot.xyz",
+                                     icon_url="https://mrrazamataz.ga/archive/RazBot.png")
+                    embed.add_field(name="This system is in **beta**, which means it will be buggy and slow.",
+                                    value="\u200b", inline=False)
+                    embed.add_field(
+                        name="THERE IS CURRENTLY A ANTI-RATE LIMIT IN PLACE, SO YOUR SPOTIFY PLAYLISTS WILL ADD SONGS ONE AT A TIME! This is being worked on, but its to prevent being blocked by YouTube.",
+                        value="\u200b", inline=True)
+                    embed.add_field(
+                        name="Issues are things such as getting rate limited by google, \nand the spammy text upon adding to a queue. \nSome of these issues have fixes in the works. ",
+                        value="\u200b", inline=True)
+                    embed.add_field(name="Please report issues to `MrRazamataz#6614`!", value="\u200b", inline=True)
+                    embed.set_footer(text="razbot.xyz")
+                    await ctx.send(embed=embed)
+                except Exception as e:
+                    print(e)
                 playlist_id = f"{query[-10:]}.txt"
                 directory = 'playlists'
                 filenames = os.listdir(directory)
@@ -366,7 +382,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 #only_files = [f for f in full_filepaths if os.path.isfile(f)]
                 print(filenames)
                 print(playlist_id)
-                await ctx.send("----------\n**THERE IS CURRENTLY A ANTI-RATE LIMIT IN PLACE, SO YOUR SPOTIFY PLAYLISTS WILL ADD SONGS ONE AT A TIME!**\nThis is being worked on, but its to prevent being blocked by YouTube.\n----------")
                 if playlist_id in filenames:
                     await ctx.send("Found playlist in cache!")
                     file = open(f"playlists/{playlist_id}")
@@ -376,7 +391,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     for line in content_list:
                         print(line)
                         await player.add_tracks(ctx, await self.wavelink.get_tracks(line))
-                        await asyncio.sleep(60)
+                        length = divmod(player.queue.current_track.length, 60000)
+                        await asyncio.sleep(int(length[0]*60))
                     return
                 else:
                     await ctx.send("Not found playlist in cache, contacting API...")
@@ -400,8 +416,8 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
                                 await file.write(f"test")
                             '''
-                            await player.add_tracks(ctx, await self.wavelink.get_tracks(i))
-                            await asyncio.sleep(60)
+                            length = divmod(player.queue.current_track.length, 60000)
+                            await asyncio.sleep(int(length[0] * 60))
                         return
                     except Exception as e:
                         print(e)
