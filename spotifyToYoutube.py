@@ -53,6 +53,7 @@ def spotyplaylist(message):
 
     def searchYoutubeAlternative(songName):
         # YouTube will block you if you query too many songs using this search.
+        # ALSO AGAINST TOS, lol, i dont use this one
         textToSearch = songName
         query = urllib.parse.quote(textToSearch)
         url = "https://www.youtube.com/results?search_query=" + query
