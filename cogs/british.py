@@ -17,7 +17,7 @@ class british(commands.Cog):
     async def british(self, ctx):
         async with ctx.channel.typing():
             async with aiohttp.ClientSession() as cs:
-                async with cs.get('https://www.reddit.com/r/uwotm8/random/.json') as r:
+                async with cs.get('https://old.reddit.com/r/uwotm8/random/.json') as r:
                     res = await r.json()
 
                     image= res[0]['data']['children'][0]['data']['url']
