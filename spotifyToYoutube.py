@@ -1,5 +1,5 @@
 # Main script from https://github.com/saulojoab/Spotify-To-Youtube, with modifications to make it work with
-# the latest spotify API and to make it run async (ish).
+# the latest spotify API and to make it run with less calls to the YT API.
 
 def spotyplaylist(message):
     # coding: utf-8
