@@ -8,6 +8,11 @@ Updates come out when I make them.
 ### Docs:
 You can view the start for the (outdated) docs here: https://github.com/MrRazamataz/RazBot/blob/main/docs/RazBotDocs.md
 
+
+## Suggestions and Bug Reports:  
+If you have a suggestion or a bug report for the bot, feel free to open a [GitHub issue](https://github.com/MrRazamataz/RazBot/issues) and put info about it here.  
+Alternatively, you can contact me on Discord at `MrRazamataz#6614`.
+
 ## Self hosting:  
 
 If you want to self host the bot, you can do if you so wish.
