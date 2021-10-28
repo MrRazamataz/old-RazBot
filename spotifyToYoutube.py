@@ -1,5 +1,5 @@
 # Main script from https://github.com/saulojoab/Spotify-To-Youtube, with modifications to make it work with
-# the latest spotify API and to make it run async (ish).
+# the latest spotify API and to make it run with less calls to the YT API.
 
 def spotyplaylist(message):
     # coding: utf-8
@@ -53,6 +53,7 @@ def spotyplaylist(message):
 
     def searchYoutubeAlternative(songName):
         # YouTube will block you if you query too many songs using this search.
+        # ALSO AGAINST TOS, lol, i dont use this one
         textToSearch = songName
         query = urllib.parse.quote(textToSearch)
         url = "https://www.youtube.com/results?search_query=" + query
