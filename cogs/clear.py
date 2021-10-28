@@ -14,14 +14,12 @@ class clear(commands.Cog):
         self.client = client
 
     @commands.command(name="clear")
+    @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int = None):
-        if ctx.author.guild_permissions.administrator:
-            if amount is None:
-                await ctx.send("Please specify the amount of messages to delete in this command.")
-            else:
-                await ctx.channel.purge(limit=amount + 1)
+        if amount is None:
+            await ctx.send("Please specify the amount of messages to delete in this command.")
         else:
-            await ctx.send("Hey! Sorry but you don't have perms for that command. Duh-Doy!")
+                await ctx.channel.purge(limit=amount + 1)
 
     @clear.error
     async def clear_error(self, ctx, error):

@@ -17,10 +17,10 @@ class ver(commands.Cog):
     async def command_ver(self, ctx: commands.Context):
         async with ctx.channel.typing():
             await asyncio.sleep(2)
-            await ctx.channel.send("This version of the bot is running version 4.1, with spoify playlist support and automod. <https://github.com/MrRazamataz/RazBot/releases/tag/v4.1>")
+            await ctx.channel.send("This version of the bot is running version 4.2, with custom commands, bal and more :)")
             await ctx.message.add_reaction("4️⃣")
             await ctx.message.add_reaction("⚫")
-            await ctx.message.add_reaction("1️⃣")
+            await ctx.message.add_reaction("2️⃣")
 
 
 

@@ -14,7 +14,7 @@ class ping(commands.Cog):
 
     @commands.command(name="ping")
     async def command_ping(self, ctx: commands.Context):
-        await ctx.channel.send("Pong!")
+        await ctx.send(f"Pong! {round(self.client.latency * 1000)}ms")
         await ctx.message.add_reaction("👍")
         await asyncio.sleep(5)
         await ctx.message.remove_reaction("👍", ctx.guild.me)

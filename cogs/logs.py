@@ -123,7 +123,11 @@ class mod(commands.Cog):
                                           description="",
                                           colour=discord.Colour.red())
                     embed.description += f"This was for spamming, and I, RazBot, picked up on it and muted you (the server owner has my spam mute turned on), sorry about that, but don't spam! \n This has been recorded in the RazBot logs."
-                    await message.author.send(embed=embed)
+                    try:
+                        await message.author.send(embed=embed)
+                    except Exception as e:
+                        print(e)
+                        pass
                     guild = message.guild
                     log_channel = discord.utils.get(guild.channels, name="razbot-logs")
                     if log_channel is None:

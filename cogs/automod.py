@@ -5,6 +5,9 @@ from discord.ext import commands
 import asyncio
 import aiofiles
 import datetime
+from datetime import datetime
+from discord_slash import cog_ext, SlashContext
+from time import time, ctime
 class automod(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -15,6 +18,40 @@ class automod(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send("RazBot AutoMod aims to protect and keep your server clean with ease. \nTo enable it simply run the command: \n`raz!automod on`")
 
+    @cog_ext.cog_subcommand(description="AutoMod Information", base_description="AutoMod settings and info", base="automod", name="info")
+    async def automod_slash_info(self, ctx):
+        await ctx.send("RazBot AutoMod aims to protect and keep your server clean with ease. \nTo enable it simply run the command: \n`/automod on`")
+
+    @cog_ext.cog_subcommand(description="AutoMod on", base="automod", name="on")
+    async def automod_slash_on(self, ctx):
+        if self.check_if_string_in_file('automod.txt', f"{ctx.guild.id}\n"):
+            await ctx.channel.send(
+                "AutoMod is already enabled in this discord server! You can disable it with: \n`/automod off`")
+        else:
+            async with aiofiles.open("automod.txt", mode="a") as file:
+                await file.write(f"{ctx.guild.id}\n")
+                await file.close()
+            await ctx.send("AutoMod has been enabled on this discord server!")
+            with open("automod.txt", "r") as file:
+                global discordserverids
+                discordserverids = file.read().splitlines()
+                print(discordserverids)
+    @cog_ext.cog_subcommand(description="AutoMod off", base="automod", name="off")
+    async def automod_slash_off(self, ctx):
+        if self.check_if_string_in_file('automod.txt', f"{ctx.guild.id}\n"):
+            with open("automod.txt", "r") as f:
+                lines = f.readlines()
+            with open("automod.txt", "w") as f:
+                for line in lines:
+                    if line.strip("\n") != f"{ctx.guild.id}":
+                        f.write(line)
+            await ctx.send("AutoMod has been disabled on this server!")
+            with open("automod.txt", "r") as file:
+                global discordserverids
+                discordserverids = file.read().splitlines()
+                print(discordserverids)
+        else:
+            await ctx.send("AutoMod isn't enabled on this server, you can enable it with: \n`/automod on`")
     @automod.command()
     @commands.has_permissions(ban_members=True)
     async def on(self, ctx):
@@ -106,6 +143,7 @@ class automod(commands.Cog):
             global banned_words
             banned_words = file.read().splitlines()
             print(banned_words)
+        self.client.removing_channels = {}
     @commands.Cog.listener()
     async def on_message(self, message):
         if message.guild is None:
@@ -130,7 +168,7 @@ class automod(commands.Cog):
         for word in banned_words:
             if not message.author.bot:
                 if guildid in discordserverids:
-                    if word in message.content:
+                    if word in message.content.lower():
                         await message.delete()
                         await message.channel.send(f"Hey <@{message.author.id}>, please refrain from using banned/NSFW words.")
                         guild = message.guild
@@ -155,7 +193,7 @@ class automod(commands.Cog):
         for word in banned_words:
             if not message_after.author.bot:
                 if guildid in discordserverids:
-                    if word in message_after.content:
+                    if word in message_after.content.lower():
                         await message_after.delete()
                         await message_after.channel.send(f"Hey <@{message_after.author.id}>, please refrain from using banned/NSFW words. \nTrying to be smart by edting your messages doesn't bypass me, mate.")
                         guild = message_after.guild
@@ -173,6 +211,44 @@ class automod(commands.Cog):
                             embed.add_field(name="Action:", value="Message has been deleted.",
                                             inline=True)
                             await log_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_guild_channel_delete(self, channel):
+        guild = channel.guild
+        async for event in guild.audit_logs(action=discord.AuditLogAction.channel_delete,
+                                            limit=3):  # get last 3 incase someone delete at exact time?
+            if event.user is not self.client.user:
+                if event.target.id == channel.id:
+                    try:
+                        amount, last = self.client.removing_channels[event.user.id]
+                        if time() - last < 5:  # 5 seconds between each creation will be flagged
+                            amount += 1
+                            last = time()
+
+                            if amount >= 3:
+                                await event.user.ban(reason="For deleting 3 or more channels at once.")
+                                guild = event.guild
+                                log_channel = discord.utils.get(guild.channels, name="razbot-logs")
+                                if log_channel is None:
+                                    return
+                                else:
+                                    await log_channel.send(f"Successfully banned {event.user.name} for deleting more than 3 channels at once.")
+                                return
+
+                        else:  # otherwise reset the time
+                            amount = 1
+                            last = 0
+
+                        self.client.removing_channels[event.user.id] = (amount, last)
+
+                    except KeyError:
+                        self.client.removing_channels[event.user.id] = (1, time())
+
+                    except Exception as error:
+                        print(guild.id, f"failed at {error} whilst calculating channel deletion amounts.")
+
+                    finally:
+                        break
     def check_if_string_in_file(self, file_name, string_to_search):  # string checker
         """ Check if any line in the file contains given string """
         # Open the file in read only mode

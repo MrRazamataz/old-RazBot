@@ -18,9 +18,9 @@ intents = discord.Intents.default()
 intents.members = True
 quotation_mark = '"'
 client = commands.Bot(command_prefix=["raz!", "r!"], help_command=None, intents=intents, case_insensitive=True) #intents end
-slash = SlashCommand(client, override_type=True, sync_commands=True)
+slash = SlashCommand(client, override_type=True, sync_commands=True, sync_on_cog_reload = True)
 client.warnings = {}
-cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest', 'cogs.vote', 'cogs.user', 'cogs.meme', 'cogs.british', 'cogs.wiki', 'cogs.music', 'cogs.misc', 'cogs.automod', 'cogs.clearwarns', 'cogs.logs'] # cogs.join_and_leave
+cogs = ['cogs.mod', 'cogs.help', 'cogs.ping', 'cogs.lucky', 'cogs.countdown', 'cogs.ver', 'cogs.tps', 'cogs.spam', 'cogs.info', 'cogs.plugins', 'cogs.5minchannel', 'cogs.slowmode', 'cogs.kick', 'cogs.ban', 'cogs.unban', 'cogs.tempmute', 'cogs.mute', 'cogs.unmute', 'cogs.permlist', 'cogs.tias', 'cogs.say', 'cogs.clear', 'cogs.ghostping', 'cogs.lockdown', 'cogs.unlock', 'cogs.quotes', 'cogs.add_role', 'cogs.slash_add_role', 'cogs.slash_ban', 'cogs.slash_clear', 'cogs.slash_countdown', 'cogs.slash_ghostping', 'cogs.slash_help', 'cogs.slash_info', 'cogs.slash_kick', 'cogs.slash_lockdown', 'cogs.cmds', 'cogs.suggest', 'cogs.vote', 'cogs.user', 'cogs.meme', 'cogs.british', 'cogs.wiki', 'cogs.music', 'cogs.misc', 'cogs.automod', 'cogs.clearwarns', 'cogs.logs', 'cogs.tools', 'cogs.money', 'cogs.stickbuglol', 'cogs.customcommands'] # cogs.join_and_leave
 client.reaction_roles = []
 dm_list = []
 for cog in cogs:  # Looks for the cogs,
@@ -85,15 +85,16 @@ async def on_ready():
     print(f"Log settings loaded.")
     print(f"Discord.py: {discord.__version__}")
     print(f"Wavelink: {wavelink.__version__}")
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.users)} Members, razbot.xyz'))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f'{len(client.guilds)} guilds, razbot.xyz'))
     while True:
         await asyncio.sleep(10)
         if os.path.getsize("spam_detect.txt") > 0:
             with open("spam_detect.txt", "r+") as file:
                 file.truncate(0)
-            print("Cleared spam detect text file.")
+            print("[Feature] Cleared spam detect text file.")
         else:
-            print("Spam file was empty, so not clearing.")
+            pass
+
 async def on_reconnect():
     print("Reconnected to discord!")
 def check_if_string_in_file(file_name, string_to_search): #string checker
@@ -110,7 +111,7 @@ def check_if_string_in_file(file_name, string_to_search): #string checker
 async def on_member_join(member):
     print("Status updated, user joined.")
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                           name=f'{len(client.users)} Members, razbot.xyz Newest member is `{member.name}`!'))
+                                                           name=f'{len(client.guilds)} guilds, razbot.xyz Newest member is `{member.name}`!'))
 @client.command(name="bugreport")
 async def command_cog(ctx, *, message):
     async with aiofiles.open("bug_data.txt", mode="a") as file:
@@ -176,13 +177,6 @@ async def leaveserver(ctx, guild_id):
         await ctx.send(f"I left: {guild_id}")
     else:
         await ctx.send("This command can only be ran by MrRazamataz!")
-@client.command(name="vcamount")
-async def vcamount(ctx):
-    count_list = []
-    for vc in client.voice_clients:
-        for member in vc.members:
-            count_list.append(member)
-    await ctx.send(f"There are {count_list} connected voice channels!")
 # Reaction Role Code
 @client.command(name="set_reaction", aliases=["reactionrole", "reaction", "rr"])
 @commands.has_permissions(administrator=True)
@@ -412,10 +406,6 @@ async def on_message(message):
 async def hello_world(ctx: commands.Context):
     await ctx.send("Hello, world!")
 
-@client.command(name="ping-test")
-async def command_pingtest(ctx: commands.Context):
-    async def ping(self, ctx: commands.Context):
-        await ctx.send(f"Pong! {round(client.latency * 1000)}ms")
 
 
 

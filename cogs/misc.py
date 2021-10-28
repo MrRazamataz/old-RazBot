@@ -18,7 +18,7 @@ class misc(commands.Cog):
                 # No cog, means we reload all cogs
                 async with ctx.typing():
                     embed = discord.Embed(
-                        title="Reloading all cogs!",
+                        title="RazBot Admin System:",
                         color=0x808080,
                         timestamp=ctx.message.created_at
                     )
@@ -80,6 +80,10 @@ class misc(commands.Cog):
                         await ctx.delete()
                     if cog == "logs":
                         await ctx.send("raz!reloadvarforlogs")
+                        await asyncio.sleep(1)
+                        await ctx.delete()
+                    if cog == "money":
+                        await ctx.send("raz!reloadvarformoney")
                         await asyncio.sleep(1)
                         await ctx.delete()
         else:

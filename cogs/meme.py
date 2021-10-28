@@ -17,7 +17,7 @@ class meme(commands.Cog):
     async def meme(self, ctx):
         async with ctx.channel.typing():
             async with aiohttp.ClientSession() as cs:
-                async with cs.get('https://www.reddit.com/r/memes/random/.json') as r:
+                async with cs.get('https://old.reddit.com/r/memes/random/.json') as r:
                     res = await r.json()
 
                     image= res[0]['data']['children'][0]['data']['url']

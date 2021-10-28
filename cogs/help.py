@@ -1,98 +1,139 @@
 # MrRazamataz's RazBot
-# cmds command
+# Help command
 import discord
 from discord import reaction
 from discord.ext import commands
-from discord import reaction
-import asyncio
-import os
-import aiofiles
-# help pages
-page1 = discord.Embed(title="RazBot Help Page 1", description="Use the buttons below to navigate between help pages. If there are no buttons, its because there was no input for 60 seconds, and was timed out. Run the `raz!help` command again to bring up another menu.", colour=discord.Colour.orange())
-page2 = discord.Embed(title="RazBot Help Page 2", description="Commands:", colour=discord.Colour.orange())
-page2.set_thumbnail(url="https://www.mrrazamataz.ga/archive/RazBot.png")
-page2.add_field(name="Moderation:", value="\u200b", inline=False)
-page2.add_field(name="Ban:", value="`raz!ban [user-ping] [reason]`, bans the specified user from the server.", inline=True)
-page2.add_field(name="Unban: ", value="`raz!unban [user]`, unbans the specified user from the server.", inline=True)
-page2.add_field(name="Mute: ", value="`raz!mute [user-ping]`, adds the muted role to the user.", inline=True)
-page2.add_field(name="Unmute: ", value="`raz!unmute [user-ping]`, removes the muted role fron the user.", inline=True)
-page2.add_field(name="Temp Mute:", value="`raz!tempmute [user-ping] [Number] [s/m/h/d]`, tempmute the user for the amount of time specified. **Note: The space (` `) between `[Number]` and `[s/m/h/d]` is required.**", inline=True)
-page2.add_field(name="Kick:", value="`raz!kick [user-ping]`, kicks the specified user from the server.", inline=True)
-page2.add_field(name="Clear:", value="`raz!clear [number]`, clears the specified amount of messages.", inline=True)
-page2.add_field(name="Lockdown:", value="`raz!lockdown`, locks down the channel for non admins/staff.", inline=True)
-page2.add_field(name="Unlock:", value="`raz!unlock`, unlockdowns the channel after a `raz!lockdown`.", inline=True)
-page2.add_field(name="Say:", value="`raz!say [message]`, make the bot repeat the message.", inline=True)
-page2.add_field(name="Warn: ", value="`raz!warn [user-ping] [reason]`, add a warning to the user in that server.", inline=True)
-page2.add_field(name="View Warnings:", value="`raz!warnings [user-ping]`. view the warnings of the user for that server.", inline=True)
-page2.add_field(name="Slowmode:", value="`raz!slowmode <seconds>`, puts the channel in slowmode for the specified amount, set to 0 to disable slowmode.", inline=False)
-page2.add_field(name="Useful Commands:", value="\u200b", inline=True)
-page2.add_field(name="Add Reaction Role:", value="`raz!reactionrole [RoleName] [MessageID] [Emoji]`, adds a reaction which users can react to to give themselves the specifed role (works multiple times on the same message with differnet reactions).", inline=True)
-page2.add_field(name="Add Role:", value="`raz!add_role @usermention [role name]`, gives the user the role specifed. ", inline=True)
-page2.add_field(name="Suggest:", value="`raz!suggest <text>`, like vote, but for normal users (only adds reactions).", inline=True)
-page2.add_field(name="Vote:", value="`raz!vote <text>`, adds vote reactions and explanation. ", inline=True)
-page2.add_field(name="Version:", value="`raz!ver`, shows the version of the bot.", inline=True)
-page2.add_field(name="Lucky (Giveaway):", value="`raz!lucky`, adds a reaction and after 24hours, picks a random person from the reactions.", inline=True)
-page3 = discord.Embed(title="RazBot Help Page 3", description="Music commands:", colour=discord.Colour.orange())
-page3.add_field(name="\u200b", value="`raz!p <song name or YouTube song/playlist URL>`, plays the song/playlist.", inline=True)
-page3.add_field(name="\u200b", value="`raz!pause` then `raz!p` to unpause.", inline=True)
-page3.add_field(name="\u200b", value="`raz!skip`, skip to the next track in queue.", inline=True)
-page3.add_field(name="\u200b", value="`raz!back`, go back to the last song in queue.", inline=True)
-page3.add_field(name="\u200b", value="`raz!q`, shows the queue.", inline=True)
-page3.add_field(name="\u200b", value="`raz!np`, shows info about the currently playing song.", inline=True)
-page3.add_field(name="\u200b", value="`raz!shuffle`, shuffles the queue order.", inline=True)
-page3.add_field(name="\u200b", value="`raz!vol`, change the volume from 0-150%.", inline=True)
-page3.add_field(name="\u200b", value="`raz!replay`, replay the song.", inline=True)
-page3.add_field(name="\u200b", value="`raz!jump`, jump to a specific timestamp in the song.", inline=True)
-page3.add_field(name="\u200b", value="`raz!stop`, stop the playing track and clear queue.", inline=True)
-page3.add_field(name="\u200b", value="`raz!loop`, loop the current queue.", inline=True)
-page3.add_field(name="\u200b", value="`raz!lyrics`, attempt to find the lyrics to the playing song.", inline=True)
-page3.add_field(name="\u200b", value="`raz!skipto`, skips to a song value that's in the queue.", inline=True)
-timeoutpage = discord.Embed(title="RazBot Help Page Timeout", description="This helppage has timed out after no input, please run `raz!cmds` again if you want to use it again", colour=discord.Colour.red())
+
 class help(commands.Cog):
     def __init__(self, client):
         self.client = client
-        client.help_pages = [page1, page2, page3]
-    @commands.command(name="help")
-    async def cmds(self, ctx: commands.Context):
-        try:
-            buttons = [u"\u23EA", u"\u2B05", u"\u27A1", u"\u23E9"]  # skip to start, left, right, skip to end
-            current = 0
-            msg = await ctx.send(embed=self.client.help_pages[current])
 
-            for button in buttons:
-                await msg.add_reaction(button)
+    @commands.group(name="help")
+    async def help(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send("__This is the RazBot help menu:__ \n\n`<>` = required input \n`()` = optional input \n✅ = "
+                           "you have perms to use this command \n❌ = you don't have perms to use this command "
+                           "\n\nYou can query a sub-section with `raz!help <query>`. \n__Valid queries are:__ "
+                           "\n\n`music`, shows music commands. \n`mod`, shows the moderation commands. \n`tools`, "
+                           "shows tools and useful commands. \n`logs`, shows logs settings \n`fun`, shows fun "
+                           "commands.")
 
-            while True:
-                try:
-                    reaction, user = await self.client.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=60.0)
 
-                except asyncio.TimeoutError:
-                    await msg.clear_reactions()
-                    return print("Cmds page timeout!")
-
-                else:
-                    previous_page = current
-                    if reaction.emoji == u"\u23EA":
-                        current = 0
-
-                    elif reaction.emoji == u"\u2B05":
-                        if current > 0:
-                            current -= 1
-
-                    elif reaction.emoji == u"\u27A1":
-                        if current < len(self.client.help_pages) - 1:
-                            current += 1
-
-                    elif reaction.emoji == u"\u23E9":
-                        current = len(self.client.help_pages) - 1
-
-                    for button in buttons:
-                        await msg.remove_reaction(button, ctx.author)
-
-                    if current != previous_page:
-                        await msg.edit(embed=self.client.help_pages[current])
-        except Exception as e:
-            await ctx.send("Hey! I don't currently have permissions to remove reactions and the like, which I *do* need to work correctly, so if you could give me those permissions, that would be lovelaay.")
-            print(e)
+    @help.command()
+    async def music(self, ctx):
+        await ctx.send("Looking up perms...", delete_after=0.5)
+        await ctx.send("__RazBot music commands:__ \n\n**Play:** `raz!p <song name or YouTube song/playlist URL>`, "
+                       "plays the "
+                       "song/playlist. \n**Pause:** `raz!pause` to pause then `raz!p` to unpause. \n**Skip:** "
+                       "`raz!skip`, skip to the next "
+                       "track in queue. \n**Back:**`raz!back`, go back to the last song in queue. \n**Queue:** `raz!q "
+                       "(int, queue length "
+                       "defaults to 10)`, shows the queue. "
+                       "\n**Now playing:** `raz!np`, shows info about the currently playing song. \n**Shuffle:** "
+                       "`raz!shuffle`, shuffles the queue "
+                       "order. \n**Volume:** `raz!vol <0-150%>`, change the volume from 0-150%. \n**Replay:** "
+                       "`raz!replay`, replay the "
+                       "song.\n**Jump:** `raz!jump <time in s>`, jump to a specific timestamp in the song. "
+                       "\n**Stop:** `raz!stop`, "
+                       "stop the playing "
+                       "track and clear queue. \n**Loop**: `raz!loop <all/1/none>`, loop with the selected mode. "
+                       "\n**Lyrics:** `raz!lyrics`, "
+                       "attempt to find "
+                       "the lyrics to the playing song. \n**Skipto:** `raz!skipto`, skips to a song value that's in "
+                       "the queue. "
+                       "\n`<--- End --->`")
+    @help.command()
+    async def mod(self, ctx):
+        await ctx.send("Looking up perms...", delete_after=0.5)
+        if ctx.author.guild_permissions.manage_messages == True:
+            message_emoji = "✅"
+        else:
+            message_emoji = "❌"
+        if ctx.author.guild_permissions.ban_members == True:
+            ban_emoji = "✅"
+        else:
+            ban_emoji = "❌"
+        if ctx.author.guild_permissions.kick_members == True:
+            kick_emoji = "✅"
+        else:
+            kick_emoji = "❌"
+        if ctx.author.guild_permissions.manage_channels == True:
+            channels_emoji = "✅"
+        else:
+            channels_emoji = "❌"
+        if ctx.author.guild_permissions.mute_members == True:
+            mute_emoji = "✅"
+        else:
+            mute_emoji = "❌"
+        await ctx.send(f"__RazBot moderation commands:__ \n\n**Ban:** `raz!ban <user> (reason)`, bans the specified "
+                       f"user from the server. {ban_emoji} \n**Unban:** `raz!unban <user>`, unbans the specified user from the "
+                       f"server. {ban_emoji} \n**Mute:** `raz!mute <user>`, adds the muted role to the user. {ban_emoji} \n**Unmute:** "
+                       f"`raz!unmute <user>`, removes the muted role from the user. {ban_emoji} \n**Temp Mute:** `raz!tempmute "
+                       "<user> <Number> <s/m/h/d>`, tempmute the user for the amount of time specified. *Note: "
+                       f"The space < > between <Number> and <s/m/h/d> is required.* {ban_emoji} \n**Kick:** `raz!kick <user>`, "
+                       f"kicks the specified user from the server. {kick_emoji} \n**Clear:** `raz!clear <number>`, clears the "
+                       f"specified amount of messages. {message_emoji} \n**Lockdown:** `raz!lockdown`, locks down the channel for non "
+                       f"admins/staff. {channels_emoji} \n**Unlock:** `raz!unlock`, unlock-downs the channel after a raz!lockdown. {channels_emoji}"
+                       "\n**Slowmode:** `raz!slowmode <int>`, puts the channel in slowmode for the specified amount, "
+                       f"set to 0 to disable slowmode. {mute_emoji} \n**Warn:** `raz!warn <user> <reason>`, add a warning to the "
+                       f"user in that server. {kick_emoji} \n**View Warnings:** `raz!warnings <user>`, view the warnings of the "
+                       f"user for that server. {kick_emoji} \n`<--- End --->`")
+    @help.command()
+    async def tools(self, ctx):
+        await ctx.send("Looking up perms...", delete_after=0.5)
+        if ctx.author.guild_permissions.administrator == True:
+            admin_emoji = "✅"
+        else:
+            admin_emoji = "❌"
+        if ctx.author.guild_permissions.manage_guild == True:
+            manage_emoji = "✅"
+        else:
+            manage_emoji = "❌"
+        await ctx.send("__RazBot tools and useful commands:__ \n\n**Add Reaction Role:** `raz!set_reaction <RoleName> "
+                       "<MessageID> <Emoji>`, adds a reaction which users can react to to give themselves the "
+                       f"specified role (works multiple times on the same message with different reactions). {admin_emoji} \n**Add "
+                       f"Role:** `raz!add_role <user> <role name>`, gives the user the role specified. {admin_emoji} \n~~**Lucky ( "
+                       "Giveaway):** `raz!lucky (msg)`, adds a reaction and after 24 hours, picks a random person "
+                       f"from the reactions.~~ Outdated, use new giveaway command below. {admin_emoji} \n**Wiki:** "
+                       f"`raz!wiki <search term>`, searches Wikipedia "
+                       f"for an article "
+                       "matching your term. If the article fits in the Discord character limit, it will send an embed "
+                       "with it in. If its too big, it will send the article link. If it can't find article it will "
+                       "report back not found. \n**yt2mp3:** `raz!yt2mp3 <yt link>`, will take the YouTube link you "
+                       "provided and convert it to a `.mp3` file then will send it. \n**Server info:** "
+                       "`raz!serverinfo`, shows info about the current guild. \n**User info:** `raz!userinfo (@user "
+                       "or ID)`, shows infomation on the user, or yourself if no user is specified. \n**Start "
+                       "Giveaway:** `raz!gstart <emoji> <giveaway description>`, starts a giveaway in the server. Adds "
+                       f"the emoji as a reaction to react to. {manage_emoji} \n**End Giveaway:** `raz!gend`, ends the active "
+                       f"giveaway in a server. Picks random user from the reaction added. {manage_emoji}\n`<--- End "
+                       "--->`")
+    @help.command()
+    async def logs(self, ctx):
+        await ctx.send("Looking up perms...", delete_after=0.5)
+        if ctx.author.guild_permissions.administrator == True:
+            admin_emoji = "✅"
+        else:
+            admin_emoji = "❌"
+        await ctx.send("__RazBot logs:__ \nBy default, all channels are logged into `#razbot-logs` if the "
+                       "`#razbot-logs` channel exists. These commands can disable the logs in certain channels. "
+                       "\n\n**Logs off:** `raz!log off <#channelmention>` \n**Logs on:** `raz!log on "
+                       f"<#chnnelmention>`, to be used after a logs off command if you want them back on. \n{admin_emoji}")
+    @help.command()
+    async def fun(self, ctx):
+        await ctx.send("__RazBot fun commands:__ \n\n**Wiki:** `raz!wiki <search term>`, searches Wikipedia for an "
+                       "article matching your term. If the article fits in the Discord character limit, it will send "
+                       "an embed with it in. If its too big, it will send the article link. If it can't find article "
+                       "it will report back not found. \n**Meme:** `raz!meme`, sends a meme from Reddit using a "
+                       "custom aiohttp request. \n**Bri'ish:** `raz!british`, same as Meme, but sends a post from a "
+                       "meme british subreddit instead. \n*Beta Release* **Bal:** `raz!bal (user)`, shows your bal or "
+                       "the user-pinged's bal. Bal is how many messages you have sent in servers with "
+                       "RazBot.\n**Stick Bug:** `raz!stickbug "
+                       "<picture attachement>`, converts the picture you send to a stick bug meme video. \n**Gay:** "
+                       "`raz!gay (@user)`, makes the profile of whoever, like a rainbow, which makes it gay "
+                       "apparently? "
+                       "\n**Wasted:** `raz!wasted ( "
+                       "@user)`, overlays the PFP with the wasted meme. \n**YouTube Comment:** `raz!youtube (@user) "
+                       "<comment>`, will create a picture that looks like a YouTube comment, with the profile of the "
+                       "user, and the message as the comment. \n`<--- End --->` ")
 def setup(client):
     client.add_cog(help(client))
