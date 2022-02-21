@@ -1,4 +1,7 @@
-# RazBot
+# RazBot  
+
+## Note: I update RazBot alot more than on the GitHub page. I will try harder to keep the page up to date with the bot, but I am quite busy sometimes.  
+
 A Discord bot written in discord.py
 The RazBot website can be found at https://razbot.xyz/  
 This contains infomation such as *most* of the commands that the Bot has, and an invite link.
