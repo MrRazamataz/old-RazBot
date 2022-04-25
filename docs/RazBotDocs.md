@@ -15,7 +15,7 @@ At the very bottom of your main py for your bot you need
 
 ## Commands:
 ### Moderation commands:
-### "raz!ban [user-ping] [reason", bans the user with the reason if provided. Requires ban permisson role in Discord.
+### "raz!ban [user-ping] [reason]", bans the user with the reason if provided. Requires ban permisson role in Discord.
 ![image](https://user-images.githubusercontent.com/56600481/114583458-81f19080-9c79-11eb-97bf-15d577479cba.png)
 #
 ### "raz!unban [user-ping]", unbans the user. Requieres ban permisson role.
