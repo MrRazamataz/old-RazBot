@@ -1,6 +1,6 @@
 # RazBot  
 
-## Note: I update RazBot alot more than on the GitHub page. I will try harder to keep the page up to date with the bot, but I am quite busy sometimes.  
+## Note: RazBot is due for a recode. Its on my list for when I have more free time. Some of the code displayed here is most definiely not my best work.  
 
 A Discord bot written in discord.py
 The RazBot website can be found at https://razbot.xyz/  
