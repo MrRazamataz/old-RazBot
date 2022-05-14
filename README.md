@@ -1,5 +1,5 @@
 # RazBot  
-
+## Updated note (14.05.2022): This repo has been renamed to `old-RazBot`. New RazBot will be found in the RazBot repo. This has been archived. 
 ## Note: RazBot is due for a recode. Its on my list for when I have more free time. Some of the code displayed here is most definiely not my best work.  
 
 A Discord bot written in discord.py
